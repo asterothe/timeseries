@@ -32,6 +32,7 @@ int main(void)
 {
 
        TimeSeries TS;
+
        TS.PAA(10);
 
 

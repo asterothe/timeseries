@@ -16,7 +16,9 @@ using namespace std;
 namespace ApproPlato
 {
 
-#define SERIES_SIZE  1000
+#define SERIES_SIZE  10
+typedef std::vector<std::vector<double> > Segs;
+
 
 class TimeSeries
 {
@@ -30,9 +32,10 @@ class TimeSeries
 	   std::vector<double> PAASeries;
 	   std::vector<double> PLRSeries;
 
+	   Segs MySegs;
 
 
-	   void  PAA(float MaxError);
+	   void  PAA(double MaxError);
 	   void  PLR();
 
 };
