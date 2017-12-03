@@ -32,10 +32,28 @@ TimeSeries::TimeSeries()
 
 
       OriginalSeries.push_back(val);
-      cout << val << " <- generated" << endl;
+      //cout << val << " <- generated" << endl;
+
+      cout << val << " " ;
     }
+    cout << endl;
+
     sleep(3);
 
+
+    /*
+    OriginalSeries.push_back(5);
+    OriginalSeries.push_back(5);
+    OriginalSeries.push_back(1);
+    OriginalSeries.push_back(5);
+    OriginalSeries.push_back(2);
+    OriginalSeries.push_back(3);
+    OriginalSeries.push_back(5);
+    OriginalSeries.push_back(3);
+    OriginalSeries.push_back(4);
+    OriginalSeries.push_back(3);
+
+*/
     /*
     for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
     {
@@ -66,20 +84,25 @@ void  TimeSeries::PAA(double MaxError)
        double lastgoodaverage = 0;
        for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
        {
+
+    	         cout << "-------------------------------------- " << endl;
     	         sum += *it;
     	         average = sum/count++;
-
+             cout << "sum = " << sum << endl;
+             cout << "average = " << average << endl;
     	         //error = abs(average- *it);
     	         // calculate error up to this element
     	         std::vector<double>::iterator it2 = it;
     	         int index = (int) count;
     	         index--;
+    	         error = 0;
     	         while(index)
     	         {
-    	        	 error += abs(average- *it2);
-    	        	 index--;
+    	        	     error += abs(average- *it2);
+    	        	     index--;
+    	        	     it2--;
     	         }
-    	         previouserror = error;
+    	         //previouserror = error;
              cout << "error =  " << error <<endl;
 
 
@@ -88,7 +111,7 @@ void  TimeSeries::PAA(double MaxError)
     	              // add to the segment
     	        	     TempSegHolder->push_back(*it);
     	        	     lastgoodaverage = average;
-
+    	        	     previouserror = error;
 
 
     	         }
@@ -100,8 +123,11 @@ void  TimeSeries::PAA(double MaxError)
     	        	     sum = 0;
     	             sum = *it;
     	             count = 1;
-    	             average = sum/count;
+    	             lastgoodaverage=average = sum/count++;
+    	             cout << "sum* = " << sum << endl;
+    	             cout << "average* = " << average << endl;
     	             previouserror= error = abs(average - *it);
+    	             cout << "error* =  " << error <<endl;
     	      	     MySegs.push_back(*TempSegHolder);
     	      	     TempSegHolder->clear();
    	              // add  as the first element of the next segment
@@ -111,6 +137,14 @@ void  TimeSeries::PAA(double MaxError)
 
        }
 
+
+       if (!TempSegHolder->empty())
+       {
+    	         MySegs.push_back(*TempSegHolder);
+    	         TempSegHolder->clear();
+        	     Errors.push_back(previouserror);
+        	     Averages.push_back(lastgoodaverage);
+       }
 /*
        for (i = 0; i < OriginalSeries.size(); i++)
        {
@@ -128,6 +162,8 @@ void  TimeSeries::PAA(double MaxError)
        }
 */
 
+
+       /*
        for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
        {
 
@@ -145,12 +181,53 @@ void  TimeSeries::PAA(double MaxError)
 	   {
             cout << " Error  = " << *it3 << endl;
 	   }
-
+*/
+	   cout << " PAA Approx  = " << endl;
 	   for (std::vector<double>::iterator it3=Averages.begin() ; it3 != Averages.end(); it3++)
 	   {
-            cout << " Average  = " << *it3 << endl;
+            cout << " " << *it3;
 	   }
+       cout << endl;
 
+       sleep(5);
+
+       std::vector<double>::iterator it4=Averages.begin() ;
+       std::vector<double>::iterator it5=Errors.begin() ;
+       for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
+       {
+
+    	   cout << "new segment" << endl;
+
+    	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
+    	   {
+                cout << " val  = " << *it2 << endl;
+    	   }
+       cout << "seg approx = " << *it4 << endl;
+       it4++;
+       cout << "seg error = " << *it5 << endl;
+       it5++;
+       }
+
+       cout << " Approximations : "  << endl;
+       std::vector<double>::iterator it6=Averages.begin() ;
+       //std::vector<double>::iterator it7=Errors.begin() ;
+       for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
+       {
+
+
+
+    	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
+    	   {
+                //cout << " val  = " << *it2 << endl;
+
+                cout << " " << *it6 ;
+
+    	   }
+       it6++;
+
+       //it5++;
+       }
+       cout << endl;
 
 
 

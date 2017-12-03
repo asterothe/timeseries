@@ -16,7 +16,7 @@ using namespace std;
 namespace ApproPlato
 {
 
-#define SERIES_SIZE  10
+#define SERIES_SIZE  100
 typedef std::vector<std::vector<double> > Segs;
 
 
