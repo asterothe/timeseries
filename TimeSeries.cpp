@@ -24,7 +24,7 @@ TimeSeries::TimeSeries()
     int i;
     int val;
 
-    srand(time(NULL)) ;
+ /*   srand(time(NULL)) ;
     for (i = 0; i < SERIES_SIZE; i++)
     {
 
@@ -37,9 +37,16 @@ TimeSeries::TimeSeries()
       cout << val << " " ;
     }
     cout << endl;
-
+*/
     sleep(3);
 
+
+    OriginalSeries.push_back(5);
+   // OriginalSeries.push_back(5);
+    OriginalSeries.push_back(6);
+    OriginalSeries.push_back(10);
+    OriginalSeries.push_back(1);
+    OriginalSeries.push_back(3);
 
     /*
     OriginalSeries.push_back(5);
@@ -232,12 +239,87 @@ void  TimeSeries::PAA(double MaxError)
 
 
 }
-void  TimeSeries::PLR()
+void  TimeSeries::PLR(double MaxError)
 {
+    int i;
+    std::vector<double> *TempSegHolder = new std::vector<double>();
+    std::vector<double> Errors;
+    std::vector<double> Averages;
+    double average = 0;
+    double count = 1;
+    double error = 0;
+    double sum = 0;
+    double previouserror = 0;
+    double lastgoodaverage = 0;
+    double Begin = 0;
+    double End = 0;
+    double Slope = 0;
+    double Constant = 0;
+    std::vector<double>::iterator begit;
+    std::vector<double>::iterator endit;
+    std::vector<double>::iterator indexit;
+
+    for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
+    {
+        cout << "HERE" <<endl;
+        if (count == 1)
+        {
+               Begin = *it;
+               begit = it;
+               indexit = begit;
+               cout << "HERE 2" <<endl;
+        }
+        else
+        {
+               End = *it;
+               endit = it;
+               cout << "HERE 3" <<endl;
+        }
+
+        if(count > 1)
+        {
+            cout << " begin =" << Begin <<  "end = " << End <<"count = " << count << endl;
+            FindLineEquation(Begin, 1, End, count , Slope, Constant);
+            cout << " y =" << Slope << "x+" << Constant << endl;
+            cout << "HERE 4" <<endl;
+        }
+        // if the next element is on the line do not calculate new equation as an optimization
+
+        if (count > 2)
+        {
+             //calculate errors until count = 1, Begin.
+        	 cout << "HERE 5" <<endl;
+
+        	     int internalcount = 1;
+        	     while (indexit != endit)
+        	     {
+
+        	     CalculatePLRError(*indexit, Slope, internalcount++ ,Constant, error);
+        	     cout << "error = " << error << endl;
+        	     indexit++;
+        	     }
+        }
+
+       count++;
+
+        if (error > MaxError)
+        {
+        	     count = 1;
+        	     error = 0;
+        }
+    }
 
 }
 
+void TimeSeries::FindLineEquation(double BeginY, double BeginX, double EndY, double EndX ,double& Slope, double& Constant)
+{
+     Slope = (EndY - BeginY)/ (EndX-BeginX);  // m = rise / run
+     Constant = BeginY - BeginX  * Slope;      // b = y - mx
+}
 
-
-
+void TimeSeries::CalculatePLRError(double ActualValue, double Slope, double Count, double Constant, double& Error)
+{
+     // Error = actual value - (mx + b)
+     Error += abs(ActualValue - Slope * Count - Constant);
+}
 };
