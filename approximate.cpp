@@ -33,7 +33,9 @@ int main(void)
 
        TimeSeries TS;
 
-       TS.PAA(3);
+       //TS.PAA(3);
+
+       TS.PLR(5);
 
 
 

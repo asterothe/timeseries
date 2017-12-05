@@ -16,7 +16,7 @@ using namespace std;
 namespace ApproPlato
 {
 
-#define SERIES_SIZE  100
+#define SERIES_SIZE  10
 typedef std::vector<std::vector<double> > Segs;
 
 
@@ -36,7 +36,10 @@ class TimeSeries
 
 
 	   void  PAA(double MaxError);
-	   void  PLR();
+	   void  PLR(double MaxError);
+
+	   void FindLineEquation(double BeginY, double BeginX, double EndY, double EndX  ,double& Slope, double& Constant);
+	   void CalculatePLRError(double ActualValue, double Slope, double Count, double Constant, double& Error);
 
 };
 }
