@@ -35,7 +35,8 @@ int main(void)
 
        //TS.PAA(3);
 
-       TS.PLR(5);
+       //TS.PLR(5);
+       TS.PLRbyLR(5);
 
 
 

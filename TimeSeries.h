@@ -37,8 +37,11 @@ class TimeSeries
 
 	   void  PAA(double MaxError);
 	   void  PLR(double MaxError);
+	   void  PLRbyLR(double MaxError);
 
 	   void FindLineEquation(double BeginY, double BeginX, double EndY, double EndX  ,double& Slope, double& Constant);
+	   void FindLineEquationByLR(double NewX, double NewY,double& SumX, double& SumY, double& SumXY, double& SumXSqr,
+	   		double& SumYSqr, double& SampleSize, double& Slope, double& Constant);
 	   void CalculatePLRError(double ActualValue, double Slope, double Count, double Constant, double& Error);
 
 };
