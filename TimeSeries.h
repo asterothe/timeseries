@@ -19,6 +19,12 @@ namespace ApproPlato
 #define SERIES_SIZE  10
 typedef std::vector<std::vector<double> > Segs;
 
+typedef struct
+{
+     float Slope;
+     float Constant;
+}LineParameters;
+
 
 class TimeSeries
 {
