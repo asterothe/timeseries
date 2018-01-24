@@ -38,7 +38,8 @@ int main(void)
        //TS.PLR(5);
        TS.PLRbyLR(5);
 
-
+       cout <<" XXXXXXXXXXXXXXXXX   Linear Interpolation   XXXXXXXXXXX" << endl;
+       TS.PLR(5);
 
 
 
