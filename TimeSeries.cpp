@@ -244,7 +244,9 @@ void  TimeSeries::PLR(double MaxError)
     int i;
     std::vector<double> *TempSegHolder = new std::vector<double>();
     std::vector<double> Errors;
-    std::vector<double> Averages;
+    //std::vector<double> Averages;
+    std::vector<LineParameters> Lines;   // hold line equations for good approximations
+
     double average = 0;
     double count = 1;
     double error = 0;
@@ -255,25 +257,28 @@ void  TimeSeries::PLR(double MaxError)
     double End = 0;
     double Slope = 0;
     double Constant = 0;
+    LineParameters LastParams;
     std::vector<double>::iterator begit;
     std::vector<double>::iterator endit;
     std::vector<double>::iterator indexit;
 
     for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
     {
-        cout << "HERE" <<endl;
+       // cout << "HERE" <<endl;
         if (count == 1)
         {
                Begin = *it;
                begit = it;
                indexit = begit;
-               cout << "HERE 2" <<endl;
+               Slope = 0;
+               Constant = *it;
+               //cout << "HERE 2" <<endl;
         }
         else
         {
                End = *it;
                endit = it;
-               cout << "HERE 3" <<endl;
+               //cout << "HERE 3" <<endl;
         }
 
         if(count > 1)
@@ -281,14 +286,14 @@ void  TimeSeries::PLR(double MaxError)
             cout << " begin =" << Begin <<  "end = " << End <<"count = " << count << endl;
             FindLineEquation(Begin, 1, End, count , Slope, Constant);
             cout << " y =" << Slope << "x+" << Constant << endl;
-            cout << "HERE 4" <<endl;
+            //cout << "HERE 4" <<endl;
         }
         // if the next element is on the line do not calculate new equation as an optimization
 
         if (count > 2)
         {
              //calculate errors until count = 1, Begin.
-        	 cout << "HERE 5" <<endl;
+        	 //cout << "HERE 5" <<endl;
 
         	     int internalcount = 1;
         	     while (indexit != endit)
@@ -300,15 +305,57 @@ void  TimeSeries::PLR(double MaxError)
         	     }
         }
 
-       count++;
+
 
         if (error > MaxError)
         {
+
+
+   	         Errors.push_back(previouserror);
+
+             previouserror = error = 0;
+             //CalculatePLRError(*it, Slope, internalcount++ ,Constant, error);
+ 	         MySegs.push_back(*TempSegHolder);
+ 	         TempSegHolder->clear();
+ 	         Lines.push_back(LastParams);
+             // add  as the first element of the next segment
+  	         TempSegHolder->push_back(*it);
+  	         Constant = *it;
+  	         Slope = 0;
+
         	     count = 1;
-        	     error = 0;
+
         }
+        else
+        {
+
+   	       TempSegHolder->push_back(*it);
+   	       LastParams.Constant = Constant;
+   	       LastParams.Slope = Slope;
+   	       previouserror = error;
+        }
+
+        count++;
+    }
+    if (!TempSegHolder->empty())
+    {
+ 	         MySegs.push_back(*TempSegHolder);
+ 	         TempSegHolder->clear();
+     	     Errors.push_back(previouserror);
+     	     Lines.push_back(LastParams);
     }
 
+
+
+    cout << " Approx Line equations  = " << endl;
+    for (std::vector<LineParameters>::iterator it=Lines.begin() ; it != Lines.end(); it++)
+	{
+         cout << "C =  " << it->Constant << " m =  " << it->Slope << endl;
+	}
+	for (std::vector<double>::iterator it3=Errors.begin() ; it3 != Errors.end(); it3++)
+	{
+            cout << " Error  = " << *it3 << endl;
+	}
 }
 
 
