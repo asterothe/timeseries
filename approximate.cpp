@@ -36,10 +36,12 @@ int main(void)
        //TS.PAA(3);
 
        //TS.PLR(5);
-       TS.PLRbyLR(5);
+       //TS.PLRbyLR(5);
 
-       cout <<" XXXXXXXXXXXXXXXXX   Linear Interpolation   XXXXXXXXXXX" << endl;
-       TS.PLR(5);
+      // cout <<" XXXXXXXXXXXXXXXXX   Linear Interpolation   XXXXXXXXXXX" << endl;
+       //TS.PLR(5);
+
+       TS.PAA(10);
 
 
 

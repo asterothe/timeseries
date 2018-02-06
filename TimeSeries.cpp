@@ -41,6 +41,7 @@ TimeSeries::TimeSeries()
     //sleep(3);
 
 
+
     OriginalSeries.push_back(5);
    // OriginalSeries.push_back(5);
     OriginalSeries.push_back(6);
@@ -80,15 +81,26 @@ TimeSeries::~TimeSeries() {
 void  TimeSeries::PAA(double MaxError)
 {
        int i;
+
+       // holds the actual values for the segment. it has as many elements as the segment approximate
        std::vector<double> *TempSegHolder = new std::vector<double>();
-       std::vector<double> Errors;
+
+       // estimated values - 1 for each segment
        std::vector<double> Averages;
+
+       // error measures - 1 for each segment
+       std::vector<double> Errors; // holds L2-norm of errors, each entry is the sum of abs errors for a segment
+       std::vector<double> AbsoluteErrors; // hold the abs diff between sum of original and estimated values
+
+
        double average = 0;
        double count = 1;
        double error = 0;
        double sum = 0;
        double previouserror = 0;
        double lastgoodaverage = 0;
+       double sumoforiginalTS = 0;
+       double sumofestimations = 0;
        for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
        {
 
@@ -119,13 +131,17 @@ void  TimeSeries::PAA(double MaxError)
     	        	     TempSegHolder->push_back(*it);
     	        	     lastgoodaverage = average;
     	        	     previouserror = error;
-
+    	    	         sumoforiginalTS += *it;
+    	    	         sumofestimations  = (count -1) * lastgoodaverage;
+                 cout << " sumoforiginalTS = " << sumoforiginalTS << endl;
+                 cout << "sumofestimations = " << sumofestimations << endl;
 
     	         }
-    	         else
+    	         else // NEW SEGMENT
     	         {
     	        	     Errors.push_back(previouserror);
     	        	     Averages.push_back(lastgoodaverage);
+    	        	     cout << "HJJJJJJJJJJJJ " <<endl;
     	        	      // reset average count error new segment
     	        	     sum = 0;
     	             sum = *it;
@@ -140,7 +156,16 @@ void  TimeSeries::PAA(double MaxError)
    	              // add  as the first element of the next segment
    	        	     TempSegHolder->push_back(*it);
 
+   	        	     cout << " sumoforiginalTS 2 = " << sumoforiginalTS << endl;
+   	             cout << "sumofestimations 2 = " << sumofestimations << endl;
+
+   	        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
+   	        	     // restrart absolute error calculation
+   	    	         sumoforiginalTS = *it;
+   	    	         sumofestimations = (count - 1) * lastgoodaverage;
+
     	         }
+
 
        }
 
@@ -151,7 +176,12 @@ void  TimeSeries::PAA(double MaxError)
     	         TempSegHolder->clear();
         	     Errors.push_back(previouserror);
         	     Averages.push_back(lastgoodaverage);
+        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
+        	    // cout << "HJJJJJJJJJJJJ " <<endl;
+        	     //sumofestimations = (count - 1) * lastgoodaverage;
        }
+
+
 /*
        for (i = 0; i < OriginalSeries.size(); i++)
        {
@@ -196,10 +226,11 @@ void  TimeSeries::PAA(double MaxError)
 	   }
        cout << endl;
 
-       sleep(5);
+      // sleep(5);
 
        std::vector<double>::iterator it4=Averages.begin() ;
        std::vector<double>::iterator it5=Errors.begin() ;
+       std::vector<double>::iterator it7=AbsoluteErrors.begin() ;
        for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
        {
 
@@ -209,10 +240,12 @@ void  TimeSeries::PAA(double MaxError)
     	   {
                 cout << " val  = " << *it2 << endl;
     	   }
-       cout << "seg approx = " << *it4 << endl;
+       cout << "seg approximated value = " << *it4 << endl;
        it4++;
-       cout << "seg error = " << *it5 << endl;
+       cout << "seg L2 error = " << *it5 << endl;
        it5++;
+       cout << "seg absolute error = " << *it7 << endl;
+       it7++;
        }
 
        cout << " Approximations : "  << endl;
@@ -235,6 +268,9 @@ void  TimeSeries::PAA(double MaxError)
        //it5++;
        }
        cout << endl;
+
+
+       cout << " segment count = " << Averages.size() << " " <<AbsoluteErrors.size() << " "<<Errors.size() << endl;
 
 
 
