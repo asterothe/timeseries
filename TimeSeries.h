@@ -17,7 +17,7 @@ namespace ApproPlato
 {
 
 #define SERIES_SIZE  10
-typedef std::vector<std::vector<double> > Segs;
+typedef std::vector<std::vector<double> > Segs; //keeps track the original time series segment by segment
 
 typedef struct
 {
@@ -53,16 +53,17 @@ class TimeSeries
 
 	   void  PAA(double MaxError);  // calculates PAA approximation using the max error as threshold
 	   void  PAAFixedLength(unsigned int SegmentLength); // calculates PAA with Fixed Length segments
+	   double  GetAverageErrors(); // Get the average of absolute Errors vector
+	   void DebugPrintAllPAA();
 
+       void CleanUp();
 
 	   void  PLR(double MaxError);
 	   void  PLRbyLR(double MaxError);
 
-	   void DebugPrintAllPAA();
-
-	   void FindLineEquation(double BeginY, double BeginX, double EndY, double EndX  ,double& Slope, double& Constant);
+       void FindLineEquation(double BeginY, double BeginX, double EndY, double EndX  ,double& Slope, double& Constant);
 	   void FindLineEquationByLR(double NewX, double NewY,double& SumX, double& SumY, double& SumXY, double& SumXSqr,
-	   		double& SumYSqr, double& SampleSize, double& Slope, double& Constant);
+	   double& SumYSqr, double& SampleSize, double& Slope, double& Constant);
 	   void CalculatePLRError(double ActualValue, double Slope, double Count, double Constant, double& Error);
 
 };

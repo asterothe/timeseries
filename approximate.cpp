@@ -23,33 +23,31 @@
 using namespace ApproPlato;
 using namespace std;
 
-
-
-
-
-
 int main(void)
 {
 
        TimeSeries TS;
 
-       //TS.PAA(3);
+       // make PAA with fixed length 100. Original series has 500k elements.
+       TS.PAAFixedLength(100);
 
-       //TS.PLR(5);
-       //TS.PLRbyLR(5);
-
-      // cout <<" XXXXXXXXXXXXXXXXX   Linear Interpolation   XXXXXXXXXXX" << endl;
-       //TS.PLR(5);
-
-       TS.PAAFixedLength(2);
-       //TS.PAA(3);
+       // there will be 500000/100 = 5000 segments
+       TS.DebugPrintAllPAA();
 
 
 
-       //TS.DebugPrintAllPAA();
+       TS.GetDesiredApproxElementPAA(3000);
 
-       TS.GetDesiredApproxElementPAA(4);
+       double average_error = TS.GetAverageErrors(); //2.29775 in this example
 
+       TS.CleanUp();
+
+       // make PAA approx using average Errors of previous FL segmentation
+       TS.PAA(average_error);  // produces 375940 segments
+
+       TS.DebugPrintAllPAA();
+
+       TS.GetDesiredApproxElementPAA(3000);
 
 	   return EXIT_SUCCESS;
 }

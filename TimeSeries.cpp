@@ -18,85 +18,26 @@ namespace ApproPlato
 
 
 
-//random values constructor
+// assumes file3.csv is available. this time we create a time series using the 3rd float parameter which
+// is ENGINE SPEED. this is the largest csv file of LAJ00508_part4.cvs minus the first line with column names
+// removed. it has 500000 rows therefore the len of the time series is 500000.
 TimeSeries::TimeSeries()
 {
-    int i;
-    int val;
-
- /*   srand(time(NULL)) ;
-    for (i = 0; i < SERIES_SIZE; i++)
-    {
-
-      val = rand() % 5 + 1;
 
 
-      OriginalSeries.push_back(val);
-      //cout << val << " <- generated" << endl;
-
-      cout << val << " " ;
-    }
-    cout << endl;
-*/
-    //sleep(3);
-
-
-
-  //  OriginalSeries.push_back(5);
-   // OriginalSeries.push_back(5);
-  //  OriginalSeries.push_back(6);
-  //  OriginalSeries.push_back(10);
-  //  OriginalSeries.push_back(1);
-   // OriginalSeries.push_back(3);
-
-    /*
-    OriginalSeries.push_back(5);
-    OriginalSeries.push_back(5);
-    OriginalSeries.push_back(1);
-    OriginalSeries.push_back(5);
-    OriginalSeries.push_back(2);
-    OriginalSeries.push_back(3);
-    OriginalSeries.push_back(5);
-    OriginalSeries.push_back(3);
-    OriginalSeries.push_back(4);
-    OriginalSeries.push_back(3);
-
-*/
-    /*
-    for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
-    {
-
-
-     	    cout << *it << endl;
-
-
-    }
-    sleep(5);
-    */
-
-
-
-
-
-
-  float f1, f2, f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14;
-  char str1[100], str2[100], str3[100];
-  FILE *fp;
-  fp = fopen("file3.csv", "r");
-
- // while (fscanf(fp, "\"%g\",\"%g\"\n", &f1, &f2) == 2)
-   // printf("%g %g\n", f1, f2);
-
-  while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
+   float f1, f2, f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14;
+   char str1[100], str2[100], str3[100];
+    FILE *fp;
+    fp = fopen("file3.csv", "r");
+    while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
 		  str1, str2, str3, &f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8,&f9, &f10,&f11, &f12,&f13) == 16)
-  {
-    printf("%g %g %g %g \n", f1, f2, f3, f4);
-
-  OriginalSeries.push_back(f3);
-  }
+    {
+       //printf("%g %g %g %g \n", f1, f2, f3, f4);
+        OriginalSeries.push_back(f3);
+    }
 }
-TimeSeries::~TimeSeries() {
 
+TimeSeries::~TimeSeries() {
 }
 
 void  TimeSeries::PAAFixedLength(unsigned int SegmentLength)
@@ -116,15 +57,10 @@ void  TimeSeries::PAAFixedLength(unsigned int SegmentLength)
      double sumofestimations = 0;
      for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
      {
-
-
   	         sum += *it;
   	         average = sum/count;
-
-
-  	         std::vector<double>::iterator it2 = it;
+	         std::vector<double>::iterator it2 = it;
   	         int index = (int) count;
-
   	         error = 0;
   	         while(index)
   	         {
@@ -133,52 +69,37 @@ void  TimeSeries::PAAFixedLength(unsigned int SegmentLength)
   	        	     it2--;
   	         }
 
-
   	         if (count   <= SegmentLength)
   	         {
-  	        	 cout << "!!!! OLD SEG !!!"  <<endl;
+
   	              // add to the segment
   	        	     TempSegHolder->push_back(*it);
   	        	     lastgoodaverage = average;
   	        	     previouserror = error;
   	    	         sumoforiginalTS += *it;
   	    	         sumofestimations  = (count ) * lastgoodaverage;
-               cout << " sumoforiginalTS = " << sumoforiginalTS << endl;
-               cout << "sumofestimations = " << sumofestimations << endl;
-
   	         }
   	         else // NEW SEGMENT
   	         {
-  	        	 cout << "!!!! NEW SEG !!!"  <<endl;
   	        	     Errors.push_back(previouserror);
   	        	     Averages.push_back(lastgoodaverage);
   	        	     ElementCountInSegment.push_back(count - 1);
-  	        	     cout << "NEW SEG COUNT  " << count <<endl;
-  	        	     cout << "HJJJJJJJJJJJJ " <<endl;
   	        	      // reset average count error new segment
   	        	     sum = 0;
   	             sum = *it;
   	             count = 1;
   	             lastgoodaverage=average = sum/count;
-  	             cout << "sum* = " << sum << endl;
-  	             cout << "average* = " << average << endl;
   	             previouserror= error = abs(average - *it);
-  	             cout << "error* =  " << error <<endl;
   	      	     MySegs.push_back(*TempSegHolder);
   	      	     TempSegHolder->clear();
  	              // add  as the first element of the next segment
  	        	     TempSegHolder->push_back(*it);
 
- 	        	     cout << " sumoforiginalTS 2 = " << sumoforiginalTS << endl;
- 	             cout << "sumofestimations 2 = " << sumofestimations << endl;
-
  	        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
- 	        	     // restrart absolute error calculation
+ 	        	     // restart absolute error calculation
  	    	         sumoforiginalTS = *it;
  	    	         sumofestimations = count  * lastgoodaverage;
-
   	         }
-
              count++;
      }
 
@@ -191,45 +112,11 @@ void  TimeSeries::PAAFixedLength(unsigned int SegmentLength)
       	     Averages.push_back(lastgoodaverage);
       	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
       	     ElementCountInSegment.push_back(count -1);
-      	     cout << "LAST COUNT  " << count <<endl;
-      	    // cout << "HJJJJJJJJJJJJ " <<endl;
-      	     //sumofestimations = (count - 1) * lastgoodaverage;
      }
-
-
-     std::vector<double>::iterator it4=Averages.begin() ;
-     std::vector<double>::iterator it5=Errors.begin() ;
-     std::vector<double>::iterator it7=AbsoluteErrors.begin() ;
-     std::vector<unsigned int>::iterator it8=ElementCountInSegment.begin();
-
-
-     cout << "===================================" << endl;
-
-     for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
-     {
-
-  	   cout << "new segment" << endl;
-
-  	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
-  	   {
-              cout << " val  = " << *it2 << endl;
-  	   }
-     cout << "seg approximated value = " << *it4 << endl;
-     it4++;
-     cout << "seg L2 error = " << *it5 << endl;
-     it5++;
-     cout << "seg absolute error = " << *it7 << endl;
-     it7++;
-     cout << "seg element count = " << *it8 << endl;
-     it8++;
-     }
-
-     cout << "===================================" << endl;
-
-
-     cout << " segment count = " << Averages.size() << " " <<AbsoluteErrors.size() << " "<<Errors.size() << endl;
 }
 
+
+// calculate PAA using SW, keeping the error for the segment under MaxError
 void  TimeSeries::PAA(double MaxError)
 {
        int i;
@@ -248,12 +135,9 @@ void  TimeSeries::PAA(double MaxError)
        for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
        {
 
-    	         cout << "-------------------------------------- " << endl;
     	         sum += *it;
     	         average = sum/count++;
-             cout << "sum = " << sum << endl;
-             cout << "average = " << average << endl;
-    	         //error = abs(average- *it);
+
     	         // calculate error up to this element
     	         std::vector<double>::iterator it2 = it;
     	         int index = (int) count;
@@ -265,9 +149,6 @@ void  TimeSeries::PAA(double MaxError)
     	        	     index--;
     	        	     it2--;
     	         }
-    	         //previouserror = error;
-             cout << "error =  " << error <<endl;
-
 
     	         if (error < MaxError)
     	         {
@@ -277,42 +158,31 @@ void  TimeSeries::PAA(double MaxError)
     	        	     previouserror = error;
     	    	         sumoforiginalTS += *it;
     	    	         sumofestimations  = (count -1) * lastgoodaverage;
-                 cout << " sumoforiginalTS = " << sumoforiginalTS << endl;
-                 cout << "sumofestimations = " << sumofestimations << endl;
-
     	         }
-    	         else // NEW SEGMENT
+    	         else // Create NEW SEGMENT, save old segment and params
     	         {
     	        	     Errors.push_back(previouserror);
     	        	     Averages.push_back(lastgoodaverage);
     	        	     ElementCountInSegment.push_back(count - 2);
-    	        	     cout << "NEW SEG COUNT  " << count <<endl;
-    	        	     cout << "HJJJJJJJJJJJJ " <<endl;
+
     	        	      // reset average count error new segment
     	        	     sum = 0;
     	             sum = *it;
     	             count = 1;
     	             lastgoodaverage=average = sum/count++;
-    	             cout << "sum* = " << sum << endl;
-    	             cout << "average* = " << average << endl;
+
     	             previouserror= error = abs(average - *it);
-    	             cout << "error* =  " << error <<endl;
+
     	      	     MySegs.push_back(*TempSegHolder);
     	      	     TempSegHolder->clear();
    	              // add  as the first element of the next segment
    	        	     TempSegHolder->push_back(*it);
 
-   	        	     cout << " sumoforiginalTS 2 = " << sumoforiginalTS << endl;
-   	             cout << "sumofestimations 2 = " << sumofestimations << endl;
-
    	        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
    	        	     // restrart absolute error calculation
    	    	         sumoforiginalTS = *it;
    	    	         sumofestimations = (count - 1) * lastgoodaverage;
-
     	         }
-
-
        }
 
 
@@ -324,114 +194,9 @@ void  TimeSeries::PAA(double MaxError)
         	     Averages.push_back(lastgoodaverage);
         	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
         	     ElementCountInSegment.push_back(count - 1);
-        	     cout << "LAST COUNT  " << count <<endl;
-        	    // cout << "HJJJJJJJJJJJJ " <<endl;
-        	     //sumofestimations = (count - 1) * lastgoodaverage;
        }
-
-
-/*
-       for (i = 0; i < OriginalSeries.size(); i++)
-       {
-    	    // new segment put Oirginal series element i in it
-    	    // calculate new segment average (kkeep previous averages and/or aggregate  add one,
-    	   // and error  for each
-    	   TempSegHolder->push_back(1 + i);
-    	   TempSegHolder->push_back(2 + i);
-    	   TempSegHolder->push_back(3 + i);
-    	   MySegs.push_back(*TempSegHolder);
-    	   TempSegHolder->clear();
-
-
-
-       }
-*/
-
-
-       /*
-       for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
-       {
-
-    	   cout << "new segment" << endl;
-
-    	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
-    	   {
-                cout << " val  = " << *it2 << endl;
-    	   }
-
-
-       }
-
-	   for (std::vector<double>::iterator it3=Errors.begin() ; it3 != Errors.end(); it3++)
-	   {
-            cout << " Error  = " << *it3 << endl;
-	   }
-*/
-	   cout << " PAA Approx  = " << endl;
-	   for (std::vector<double>::iterator it3=Averages.begin() ; it3 != Averages.end(); it3++)
-	   {
-            cout << " " << *it3;
-	   }
-       cout << endl;
-
-      // sleep(5);
-
-       std::vector<double>::iterator it4=Averages.begin() ;
-       std::vector<double>::iterator it5=Errors.begin() ;
-       std::vector<double>::iterator it7=AbsoluteErrors.begin() ;
-       std::vector<unsigned int>::iterator it8=ElementCountInSegment.begin();
-
-
-       cout << "===================================" << endl;
-
-       for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
-       {
-
-    	   cout << "new segment" << endl;
-
-    	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
-    	   {
-                cout << " val  = " << *it2 << endl;
-    	   }
-       cout << "seg approximated value = " << *it4 << endl;
-       it4++;
-       cout << "seg L2 error = " << *it5 << endl;
-       it5++;
-       cout << "seg absolute error = " << *it7 << endl;
-       it7++;
-       cout << "seg element count = " << *it8 << endl;
-       it8++;
-       }
-
-       cout << "===================================" << endl;
-
-       cout << " Approximations : "  << endl;
-       std::vector<double>::iterator it6=Averages.begin() ;
-       //std::vector<double>::iterator it7=Errors.begin() ;
-       for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
-       {
-
-
-
-    	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
-    	   {
-                //cout << " val  = " << *it2 << endl;
-
-                cout << " " << *it6 ;
-
-    	   }
-       it6++;
-
-       //it5++;
-       }
-       cout << endl;
-
-
-       cout << " segment count = " << Averages.size() << " " <<AbsoluteErrors.size() << " "<<Errors.size() << endl;
-
-
-
 }
+
 void  TimeSeries::PLR(double MaxError)
 {
     int i;
@@ -538,8 +303,6 @@ void  TimeSeries::PLR(double MaxError)
      	     Lines.push_back(LastParams);
     }
 
-
-
     cout << " Approx Line equations  = " << endl;
     for (std::vector<LineParameters>::iterator it=Lines.begin() ; it != Lines.end(); it++)
 	{
@@ -551,6 +314,8 @@ void  TimeSeries::PLR(double MaxError)
 	}
 }
 
+
+// to access the approximated value of the desired element at position index
 double TimeSeries::GetDesiredApproxElementPAA(unsigned int positionindex)
 {
     // assume approximation is already done
@@ -689,7 +454,6 @@ void  TimeSeries::PLRbyLR(double MaxError)
 }
 
 
-
 // using regression
 void TimeSeries::FindLineEquationByLR(double NewX, double NewY,double& SumX, double& SumY, double& SumXY, double& SumXSqr,
 		double& SumYSqr, double& SampleSize, double& Slope, double& Constant)
@@ -716,38 +480,60 @@ void TimeSeries::FindLineEquationByLR(double NewX, double NewY,double& SumX, dou
 	 Constant = ((SumY * SumXSqr ) - (SumX * SumXY))/ ((SampleSize * SumXSqr) - pow(SumX,2));
 }
 
+
+//dumps all the calculates values for PAA approx
 void TimeSeries::DebugPrintAllPAA()
 {
-    std::vector<double>::iterator it4=Averages.begin() ;
+     std::vector<double>::iterator it4=Averages.begin() ;
      std::vector<double>::iterator it5=Errors.begin() ;
      std::vector<double>::iterator it7=AbsoluteErrors.begin() ;
      std::vector<unsigned int>::iterator it8=ElementCountInSegment.begin();
 
-
-     cout << "===================================" << endl;
-
      for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
      {
-
-  	   cout << "new segment" << endl;
-
+       cout << "============SEGMENT START=====" << endl;
   	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
   	   {
-              cout << " val  = " << *it2 << endl;
+              cout << " original value  = " << *it2 << endl;
   	   }
-     cout << "seg approximated value = " << *it4 << endl;
-     it4++;
-     cout << "seg L2 error = " << *it5 << endl;
-     it5++;
-     cout << "seg absolute error = " << *it7 << endl;
-     it7++;
-     cout << "seg element count = " << *it8 << endl;
-     it8++;
-     }
+       cout << "seg approximated value = " << *it4 << endl;
+       it4++;
+       cout << "seg L2 error = " << *it5 << endl;
+       it5++;
+       cout << "seg absolute error = " << *it7 << endl;
+       it7++;
+       cout << "seg element count = " << *it8 << endl;
+       it8++;
 
-     cout << "===================================" << endl;
+       cout << "===============SEGMENT END =====" << endl;
+     }
+     // they better be the same. for each segment there's an average value and 2 error params
+     cout << " segment count = " << Averages.size() << " " << AbsoluteErrors.size() << " "<<Errors.size() << endl;
+}
+double TimeSeries::GetAverageErrors()
+{
+    double sum = 0;
+	std::vector<double>::iterator it5=Errors.begin();
+	    	sum +=*it5;
+
+	cout << " Average Error = " << sum/Errors.size() << endl;
+
+	return sum/Errors.size();
+}
+
+//clean all the vectors except the original series
+void TimeSeries::CleanUp()
+{
+   for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
+      (*it1).clear();
+   MySegs.clear();
+   Errors.clear();
+   AbsoluteErrors.clear();
+   Averages.clear();
+   ElementCountInSegment.clear();
 
 }
+
 };
 
 
