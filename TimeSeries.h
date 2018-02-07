@@ -34,16 +34,31 @@ class TimeSeries
 	   virtual ~TimeSeries();
 
 
-	   std::vector<double> OriginalSeries;
-	   std::vector<double> PAASeries;
-	   std::vector<double> PLRSeries;
-
-	   Segs MySegs;
+	   std::vector<double> OriginalSeries;   // original time series
 
 
-	   void  PAA(double MaxError);
+	   Segs MySegs; // vector of segments. each segment is another vector of the original series for debugging purposes
+
+
+       // estimated values - 1 for each segment  used only for PAA
+       std::vector<double> Averages;
+
+       // error measures - 1 for each segment
+       std::vector<double> Errors; // holds L2-norm of errors, each entry is the sum of abs errors for a segment
+       std::vector<double> AbsoluteErrors; // hold the abs diff between sum of original and estimated values
+
+       std::vector<unsigned int> ElementCountInSegment; // keeps track of the elements in a segment sequentially
+
+       double GetDesiredApproxElementPAA(unsigned int positionindex); // gets the appoximated value for the desired element
+
+	   void  PAA(double MaxError);  // calculates PAA approximation using the max error as threshold
+	   void  PAAFixedLength(unsigned int SegmentLength); // calculates PAA with Fixed Length segments
+
+
 	   void  PLR(double MaxError);
 	   void  PLRbyLR(double MaxError);
+
+	   void DebugPrintAllPAA();
 
 	   void FindLineEquation(double BeginY, double BeginX, double EndY, double EndX  ,double& Slope, double& Constant);
 	   void FindLineEquationByLR(double NewX, double NewY,double& SumX, double& SumY, double& SumXY, double& SumXSqr,

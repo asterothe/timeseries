@@ -41,8 +41,14 @@ int main(void)
       // cout <<" XXXXXXXXXXXXXXXXX   Linear Interpolation   XXXXXXXXXXX" << endl;
        //TS.PLR(5);
 
-       TS.PAA(10);
+       TS.PAAFixedLength(2);
+       //TS.PAA(3);
 
+
+
+       //TS.DebugPrintAllPAA();
+
+       TS.GetDesiredApproxElementPAA(4);
 
 
 	   return EXIT_SUCCESS;
