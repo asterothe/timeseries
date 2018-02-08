@@ -4,9 +4,16 @@
 
 Data Source Files:
 
-The program assumes we have an input cvs file. (right now file3.cvs)
+The program assumes we have an input cvs file. (right now file3.csv)
 The TS() Constructor parses the comma separated values. In the current example the format expects to have 15 columns for each 
 time stamp. Right now it parses and saves the 3rd parameter in the OriginalSeries vector. It also needs to have quotes before and after the data points. fscanf parameters needs to be modified for other data input files.
+
+En example line from csv: 
+"LAJ00572","2015-09-09 16:51:54.105","53283114","0","1.0","456.0","1.0","689.4375","0.0","21.9","594.375","90.15625","78.98901098901099","0","0"
+
+3rd float i.e. "456.0" is pushed to the vector. Mind the "s between values.
+
+
 
 In the main 
 
