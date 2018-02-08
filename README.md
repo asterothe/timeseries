@@ -39,6 +39,8 @@ GetAverageErrors(): provides the avergae L2 error after an approximation is done
 
 An example of PAA Approximation:
 
+       TimeSeries TS; // constructor parses the cvs file into vector
+       
        // make PAA with fixed length 100. Original series has 500k elements.
        TS.PAAFixedLength(100);
 
@@ -63,7 +65,10 @@ An example of PAA Approximation:
 
 
 An example of PLR Approximation:
-
+       
+       
+       TimeSeries TS; // constructor parses the cvs file into vector
+       
        TS.PLRFixedLength(1000);  // 500 segments with 1000 data points
        TS.DebugPrintAllPLR();
        TS.GetDesiredApproxElementPLR(2); // get 2nd element
