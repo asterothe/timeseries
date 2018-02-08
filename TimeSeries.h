@@ -53,10 +53,11 @@ class TimeSeries
        std::vector<unsigned int> ElementCountInSegment; // keeps track of the elements in a segment sequentially
 
        double GetDesiredApproxElementPAA(unsigned int positionindex); // gets the appoximated value for the desired element
+       double GetDesiredApproxElementPLR(unsigned int positionindex); // same for PLR
 
 	   void  PAA(double MaxError);  // calculates PAA approximation using the max error as threshold
 	   void  PAAFixedLength(unsigned int SegmentLength); // calculates PAA with Fixed Length segments
-	   double  GetAverageErrors(); // Get the average of absolute Errors vector
+	   double GetAverageErrors(); // Get the average of absolute Errors vector
 	   void DebugPrintAllPAA();
 	   void DebugPrintAllPLR();
 
@@ -64,6 +65,8 @@ class TimeSeries
 
 	   void  PLR(double MaxError);
 	   void  PLRbyLR(double MaxError);
+
+	   void  PLRFixedLength(unsigned int SegmentLength);  // calculates PAA with Fixed Length segments
 
        void FindLineEquation(double BeginY, double BeginX, double EndY, double EndX  ,double& Slope, double& Constant);
 	   void FindLineEquationByLR(double NewX, double NewY,double& SumX, double& SumY, double& SumXY, double& SumXSqr,
