@@ -49,9 +49,18 @@ int main(void)
 
        //TS.GetDesiredApproxElementPAA(3000);
 
-       TS.PLRbyLR(2);
+       //TS.PLRbyLR(2);
+       TS.PLRFixedLength(5);
        TS.DebugPrintAllPLR();
+       TS.GetDesiredApproxElementPLR(2);
+
+       TS.GetDesiredApproxElementPLR(8);
+       double average_error = TS.GetAverageErrors();
+
+       TS.PLRbyLR(average_error);
+
+       TS.DebugPrintAllPLR();
+
 
 	   return EXIT_SUCCESS;
 }
-
