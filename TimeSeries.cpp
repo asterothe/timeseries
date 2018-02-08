@@ -203,7 +203,7 @@ void  TimeSeries::PLR(double MaxError)
     std::vector<double> *TempSegHolder = new std::vector<double>();
     std::vector<double> Errors;
     //std::vector<double> Averages;
-    std::vector<LineParameters> Lines;   // hold line equations for good approximations
+    //std::vector<LineParameters> Lines;   // hold line equations for good approximations
 
     double average = 0;
     double count = 1;
@@ -359,22 +359,19 @@ void TimeSeries::FindLineEquation(double BeginY, double BeginX, double EndY, dou
 void TimeSeries::CalculatePLRError(double ActualValue, double Slope, double Count, double Constant, double& Error)
 {
      // Error = actual value - (mx + b)
-     Error += abs(ActualValue - Slope * Count - Constant);
+     Error += abs(ActualValue - (Slope * Count + Constant));
 }
 
 void  TimeSeries::PLRbyLR(double MaxError)
 {
     int i;
     std::vector<double> *TempSegHolder = new std::vector<double>();
-    std::vector<double> Errors;
-    std::vector<double> Averages;
+    //std::vector<double> Errors;
     double average = 0;
     double count = 1;
     double error = 0;
     double sum = 0;
     double previouserror = 0;
-    double lastgoodaverage = 0;
-    double Begin = 0;
     double End = 0;
     double Slope = 0;
     double Constant = 0;
@@ -385,6 +382,7 @@ void  TimeSeries::PLRbyLR(double MaxError)
     double SumYSqr = 0;
     double SampleSize = 0;
     double X = 1;
+    LineParameters LastParams;
 
 
     std::vector<double>::iterator begit;
@@ -393,12 +391,12 @@ void  TimeSeries::PLRbyLR(double MaxError)
 
     for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
     {
-        cout << "HERE" <<endl;
+        cout << "HERE" << *it << endl;
         if (count == 1)
         {
-               Begin = *it;
+
                begit = it;
-               indexit = begit;
+               //indexit = begit;
 
         }
         else
@@ -407,12 +405,22 @@ void  TimeSeries::PLRbyLR(double MaxError)
                endit = it;
 
         }
+        indexit = begit;//????
+        error = 0; //????
+     //   if ( count > 1)
+      //  {
+
 
 
             FindLineEquationByLR( X, *it, SumX, SumY,  SumXY,  SumXSqr,
             		 SumYSqr,  count,  Slope,  Constant);
             cout << " y =" << Slope << "x+" << Constant << endl;
-
+            if (count == 1)
+            {
+            	   Slope = 0;
+            	   Constant = *it;
+            }
+      //  }
 
 
         // if the next element is on the line do not calculate new equation as an optimization
@@ -421,25 +429,46 @@ void  TimeSeries::PLRbyLR(double MaxError)
         {
              //calculate errors until count = 1, Begin.
 
-
+        	previouserror = error;
         	     int internalcount = 1;
-        	     while (indexit != endit)
+        	     while (indexit <= endit)
         	     {
-
+        	    	 cout << "error (PRE) = " << error << endl;
         	     CalculatePLRError(*indexit, Slope, internalcount++ ,Constant, error);
-        	     cout << "error = " << error << endl;
+        	    //previouserror = error;
+        	     cout << "error (AFTER) = " << error << endl;
         	     indexit++;
         	     }
         }
+        else
+        	 previouserror = error = 0;
 
-
+        cout << "previouserror = " << previouserror << endl;
         count++;
         X++;
 
         if (error > MaxError)
         {
+        	 Errors.push_back(previouserror);
+ 	         MySegs.push_back(*TempSegHolder);
+ 	         TempSegHolder->clear();
+ 	         Lines.push_back(LastParams);
+
+ 	         // add  as the first element of the next segment
+	         TempSegHolder->push_back(*it);
+
+	        indexit= begit = it; // for next error calculation
+
+	         endit = it;
+
+
+
         	     count = 1;
-        	     error = 0;
+        	     previouserror = error = 0;
+
+
+
+
         	     SumX = 0;
         	     SumY = 0;
         	     SumXY = 0;
@@ -447,9 +476,76 @@ void  TimeSeries::PLRbyLR(double MaxError)
         	     SumYSqr = 0;
         	     SampleSize = 0;
         	     X = 1;
+
+                 FindLineEquationByLR( X, *it, SumX, SumY,  SumXY,  SumXSqr,
+                 		 SumYSqr,  count,  Slope,  Constant);
+
+                 if (count == 1)
+                 {
+                 	   Slope = 0;
+                 	   Constant = *it;
+                 }
+                 cout << " y* =" << Slope << "x+" << Constant << endl;
+                 LastParams.Constant = Constant;
+                   	       LastParams.Slope = Slope;
+
+        	     int internalcount = 1;
+        	     count++;
+        	     X++;
+
+
+        }
+        else
+        {
+    	       TempSegHolder->push_back(*it);
+    	       LastParams.Constant = Constant;
+    	       LastParams.Slope = Slope;
+    	       previouserror = error;
         }
 
+        /*
+                 if (error > MaxError)
+        {
+
+
+   	         Errors.push_back(previouserror);
+
+             previouserror = error = 0;
+             //CalculatePLRError(*it, Slope, internalcount++ ,Constant, error);
+ 	         MySegs.push_back(*TempSegHolder);
+ 	         TempSegHolder->clear();
+ 	         Lines.push_back(LastParams);
+             // add  as the first element of the next segment
+  	         TempSegHolder->push_back(*it);
+  	         Constant = *it;
+  	         Slope = 0;
+
+        	     count = 1;
+
+        }
+        else
+        {
+
+   	       TempSegHolder->push_back(*it);
+   	       LastParams.Constant = Constant;
+   	       LastParams.Slope = Slope;
+   	       previouserror = error;
+        }
+
+
+         */
+
+
+
     }
+
+    if (!TempSegHolder->empty())
+     {
+  	         MySegs.push_back(*TempSegHolder);
+  	         TempSegHolder->clear();
+      	     Errors.push_back(previouserror);
+      	     Lines.push_back(LastParams);
+     }
 
 }
 
@@ -464,9 +560,10 @@ void TimeSeries::FindLineEquationByLR(double NewX, double NewY,double& SumX, dou
      SumXY += (NewX * NewY);
      SumXSqr += pow(NewX, 2);
 	 SumYSqr += pow(NewY, 2);
-	// SampleSize++;
 
 
+	 cout << "NewX = "<< NewX << endl;
+	 cout << "NewY = "<< NewY << endl;
 	 cout << "SumX = "<< SumX << endl;
 	 cout << "SumY = "<< SumY << endl;
 	 cout << "SumXSqr= "<< SumXSqr << endl;
@@ -474,8 +571,6 @@ void TimeSeries::FindLineEquationByLR(double NewX, double NewY,double& SumX, dou
 	 cout << "SumXY = "<< SumXY << endl;
 	 cout << "Sample Size = "<< SampleSize<< endl;
 
-     //Slope = (EndY - BeginY)/ (EndX-BeginX);  // m = rise / run
-     //Constant = BeginY - BeginX  * Slope;      // b = y - mx
 	 Slope = ((SampleSize * SumXY) - (SumX * SumY))/ ((SampleSize * SumXSqr) - pow(SumX,2));
 	 Constant = ((SumY * SumXSqr ) - (SumX * SumXY))/ ((SampleSize * SumXSqr) - pow(SumX,2));
 }
@@ -531,7 +626,44 @@ void TimeSeries::CleanUp()
    AbsoluteErrors.clear();
    Averages.clear();
    ElementCountInSegment.clear();
+   Lines.clear();
 
+}
+
+//dumps all the calculates values for PLR approx
+void TimeSeries::DebugPrintAllPLR()
+{
+     //std::vector<double>::iterator it4=Averages.begin() ;
+     std::vector<double>::iterator it5=Errors.begin() ;
+     //std::vector<double>::iterator it7=AbsoluteErrors.begin() ;
+     //std::vector<unsigned int>::iterator it8=ElementCountInSegment.begin();
+     std::vector<LineParameters>::iterator it9= Lines.begin();
+
+     for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
+     {
+       cout << "============SEGMENT START=====" << endl;
+  	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
+  	   {
+              cout << " original value  = " << *it2 << endl;
+  	   }
+  /*     cout << "seg approximated value = " << *it4 << endl;
+       it4++;
+       cout << "seg L2 error = " << *it5 << endl;
+       it5++;
+       cout << "seg absolute error = " << *it7 << endl;
+       it7++;
+       cout << "seg element count = " << *it8 << endl;
+       it8++;
+*/
+
+       cout << "seg L2 error = " << *it5 << endl;
+       it5++;
+      cout << " line param slope = "  << (*it9).Slope  <<  "constant = " << (*it9).Constant << endl;
+       it9++;
+       cout << "===============SEGMENT END =====" << endl;
+     }
+     // they better be the same. for each segment there's an average value and 2 error params
+     cout << " segment count = " << Lines.size() << " " << AbsoluteErrors.size() << " "<<Errors.size() << endl;
 }
 
 };

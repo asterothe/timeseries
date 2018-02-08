@@ -43,6 +43,9 @@ class TimeSeries
        // estimated values - 1 for each segment  used only for PAA
        std::vector<double> Averages;
 
+       // line equation parameters. used only for PLR
+       std::vector<LineParameters> Lines;
+
        // error measures - 1 for each segment
        std::vector<double> Errors; // holds L2-norm of errors, each entry is the sum of abs errors for a segment
        std::vector<double> AbsoluteErrors; // hold the abs diff between sum of original and estimated values
@@ -55,6 +58,7 @@ class TimeSeries
 	   void  PAAFixedLength(unsigned int SegmentLength); // calculates PAA with Fixed Length segments
 	   double  GetAverageErrors(); // Get the average of absolute Errors vector
 	   void DebugPrintAllPAA();
+	   void DebugPrintAllPLR();
 
        void CleanUp();
 

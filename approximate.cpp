@@ -29,25 +29,28 @@ int main(void)
        TimeSeries TS;
 
        // make PAA with fixed length 100. Original series has 500k elements.
-       TS.PAAFixedLength(100);
+       //TS.PAAFixedLength(100);
 
        // there will be 500000/100 = 5000 segments
-       TS.DebugPrintAllPAA();
+       //TS.DebugPrintAllPAA();
 
 
 
-       TS.GetDesiredApproxElementPAA(3000);
+       //TS.GetDesiredApproxElementPAA(3000);
 
-       double average_error = TS.GetAverageErrors(); //2.29775 in this example
+       //double average_error = TS.GetAverageErrors(); //2.29775 in this example
 
-       TS.CleanUp();
+       //TS.CleanUp();
 
        // make PAA approx using average Errors of previous FL segmentation
-       TS.PAA(average_error);  // produces 375940 segments
+       //TS.PAA(average_error);  // produces 375940 segments
 
-       TS.DebugPrintAllPAA();
+       //TS.DebugPrintAllPAA();
 
-       TS.GetDesiredApproxElementPAA(3000);
+       //TS.GetDesiredApproxElementPAA(3000);
+
+       TS.PLRbyLR(2);
+       TS.DebugPrintAllPLR();
 
 	   return EXIT_SUCCESS;
 }
