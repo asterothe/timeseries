@@ -50,17 +50,17 @@ int main(void)
        //TS.GetDesiredApproxElementPAA(3000);
 
        //TS.PLRbyLR(2);
-       TS.PLRFixedLength(5);
+       TS.PLRFixedLength(1000);  // 500 segments with 1000 data points
        TS.DebugPrintAllPLR();
        TS.GetDesiredApproxElementPLR(2);
 
        TS.GetDesiredApproxElementPLR(8);
-       double average_error = TS.GetAverageErrors();
-
+       double average_error = TS.GetAverageErrors(); //908.49 in this example
+       TS.CleanUp();
        TS.PLRbyLR(average_error);
 
-       TS.DebugPrintAllPLR();
+       TS.DebugPrintAllPLR();  //19683 segments generated
 
-
+       TS.GetDesiredApproxElementPLR(10000);
 	   return EXIT_SUCCESS;
 }
