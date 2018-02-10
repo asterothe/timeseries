@@ -11,6 +11,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <math.h>
+#include <fstream>
 
 
 namespace ApproPlato
@@ -28,6 +29,24 @@ TimeSeries::TimeSeries()
    float f1, f2, f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14;
    char str1[100], str2[100], str3[100];
     FILE *fp;
+
+    fp = fopen("file2.csv", "r");
+    while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
+		  str1, str2, str3, &f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8,&f9, &f10,&f11, &f12,&f13) == 16)
+    {
+       //printf("%g %g %g %g \n", f1, f2, f3, f4);
+        OriginalSeries.push_back(f3);
+    }
+    fclose(fp);
+    /*
+    fp = fopen("file1.csv", "r");
+    while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
+		  str1, str2, str3, &f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8,&f9, &f10,&f11, &f12,&f13) == 16)
+    {
+       //printf("%g %g %g %g \n", f1, f2, f3, f4);
+        OriginalSeries.push_back(f3);
+    }
+    fclose(fp);
     fp = fopen("file3.csv", "r");
     while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
 		  str1, str2, str3, &f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8,&f9, &f10,&f11, &f12,&f13) == 16)
@@ -35,6 +54,38 @@ TimeSeries::TimeSeries()
        //printf("%g %g %g %g \n", f1, f2, f3, f4);
         OriginalSeries.push_back(f3);
     }
+
+    fclose(fp);
+    fp = fopen("file4.csv", "r");
+    while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
+		  str1, str2, str3, &f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8,&f9, &f10,&f11, &f12,&f13) == 16)
+    {
+       //printf("%g %g %g %g \n", f1, f2, f3, f4);
+        OriginalSeries.push_back(f3);
+    }
+
+    fclose(fp);
+    fp = fopen("file5.csv", "r");
+    while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
+		  str1, str2, str3, &f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8,&f9, &f10,&f11, &f12,&f13) == 16)
+    {
+       //printf("%g %g %g %g \n", f1, f2, f3, f4);
+        OriginalSeries.push_back(f3);
+    }
+
+    fclose(fp);
+    fp = fopen("file6.csv", "r");
+    while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
+		  str1, str2, str3, &f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8,&f9, &f10,&f11, &f12,&f13) == 16)
+    {
+       //printf("%g %g %g %g \n", f1, f2, f3, f4);
+        OriginalSeries.push_back(f3);
+    }
+
+    fclose(fp);
+    */
+
+
 }
 
 TimeSeries::~TimeSeries() {
@@ -197,124 +248,6 @@ void  TimeSeries::PAA(double MaxError)
        }
 }
 
-void  TimeSeries::PLR(double MaxError)
-{
-    int i;
-    std::vector<double> *TempSegHolder = new std::vector<double>();
-    std::vector<double> Errors;
-    //std::vector<double> Averages;
-    //std::vector<LineParameters> Lines;   // hold line equations for good approximations
-
-    double average = 0;
-    double count = 1;
-    double error = 0;
-    double sum = 0;
-    double previouserror = 0;
-    double lastgoodaverage = 0;
-    double Begin = 0;
-    double End = 0;
-    double Slope = 0;
-    double Constant = 0;
-    LineParameters LastParams;
-    std::vector<double>::iterator begit;
-    std::vector<double>::iterator endit;
-    std::vector<double>::iterator indexit;
-
-    for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
-    {
-       // cout << "HERE" <<endl;
-        if (count == 1)
-        {
-               Begin = *it;
-               begit = it;
-               indexit = begit;
-               Slope = 0;
-               Constant = *it;
-               //cout << "HERE 2" <<endl;
-        }
-        else
-        {
-               End = *it;
-               endit = it;
-               //cout << "HERE 3" <<endl;
-        }
-
-        if(count > 1)
-        {
-            cout << " begin =" << Begin <<  "end = " << End <<"count = " << count << endl;
-            FindLineEquation(Begin, 1, End, count , Slope, Constant);
-            cout << " y =" << Slope << "x+" << Constant << endl;
-            //cout << "HERE 4" <<endl;
-        }
-        // if the next element is on the line do not calculate new equation as an optimization
-
-        if (count > 2)
-        {
-             //calculate errors until count = 1, Begin.
-        	 //cout << "HERE 5" <<endl;
-
-        	     int internalcount = 1;
-        	     while (indexit != endit)
-        	     {
-
-        	     CalculatePLRError(*indexit, Slope, internalcount++ ,Constant, error);
-        	     cout << "error = " << error << endl;
-        	     indexit++;
-        	     }
-        }
-
-
-
-        if (error > MaxError)
-        {
-
-        	  cout << "PUSHING error = " << previouserror << endl;
-   	         Errors.push_back(previouserror);
-
-             previouserror = error = 0;
-             //CalculatePLRError(*it, Slope, internalcount++ ,Constant, error);
- 	         MySegs.push_back(*TempSegHolder);
- 	         TempSegHolder->clear();
- 	         Lines.push_back(LastParams);
-             // add  as the first element of the next segment
-  	         TempSegHolder->push_back(*it);
-  	         Constant = *it;
-  	         Slope = 0;
-
-        	     count = 1;
-
-        }
-        else
-        {
-
-   	       TempSegHolder->push_back(*it);
-   	       LastParams.Constant = Constant;
-   	       LastParams.Slope = Slope;
-   	       previouserror = error;
-        }
-
-        count++;
-    }
-    if (!TempSegHolder->empty())
-    {
- 	         MySegs.push_back(*TempSegHolder);
- 	         TempSegHolder->clear();
-     	     Errors.push_back(previouserror);
-     	     Lines.push_back(LastParams);
-    }
-
-    cout << " Approx Line equations  = " << endl;
-    for (std::vector<LineParameters>::iterator it=Lines.begin() ; it != Lines.end(); it++)
-	{
-         cout << "C =  " << it->Constant << " m =  " << it->Slope << endl;
-	}
-	for (std::vector<double>::iterator it3=Errors.begin() ; it3 != Errors.end(); it3++)
-	{
-            cout << " Error  = " << *it3 << endl;
-	}
-}
-
-
 // to access the approximated value of the desired element at position index
 double TimeSeries::GetDesiredApproxElementPAA(unsigned int positionindex)
 {
@@ -345,16 +278,6 @@ double TimeSeries::GetDesiredApproxElementPAA(unsigned int positionindex)
  	return *it2;
 
 }
-
-
-//using linear interpolation
-void TimeSeries::FindLineEquation(double BeginY, double BeginX, double EndY, double EndX ,double& Slope, double& Constant)
-{
-     Slope = (EndY - BeginY)/ (EndX-BeginX);  // m = rise / run
-     Constant = BeginY - BeginX  * Slope;      // b = y - mx
-}
-
-
 
 void TimeSeries::CalculatePLRError(double ActualValue, double Slope, double Count, double Constant, double& Error)
 {
@@ -818,9 +741,71 @@ double TimeSeries::GetDesiredApproxElementPLR(unsigned int positionindex)
  	value = (*it2).Slope *  relative_index + (*it2).Constant ;
  	cout << "the approximated PLR value is = " << value << " L2 Error = " << *it3 << " Absolute Error = " << *it4 << " for position index = " << positionindex << endl;
  	cout << "the Slope = " << (*it2).Slope << " the Constant = " << (*it2).Constant << endl;
- 	//cout << " relative index  = " << relative_index << endl;
+ 	cout << " relative index  = " << relative_index << endl;
 
  	return value;
 }
+
+// write all the appoximated PLR values to a file
+void TimeSeries::WriteAllElementsPLR()
+{
+    // assume approximation is already done
+
+     std::vector<LineParameters>::iterator it2=Lines.begin() ;
+     std::vector<double>::iterator it3=Errors.begin() ;
+     std::vector<double>::iterator it4=AbsoluteErrors.begin() ;
+    // std::vector<unsigned int>::iterator it4=ElementCountInSegment.begin();
+
+    unsigned int absolute_index = 0;
+    unsigned int relative_index = 0; // in the segment
+    double   value = 0;
+
+
+    ofstream myfile ("PLRout.txt");
+
+ 	for (std::vector<unsigned int>::iterator it1=ElementCountInSegment.begin();  it1 != ElementCountInSegment.end(); it1++)
+ 	{
+          for (int i = 1; i <= *it1; i++)
+          {
+        	      value =  (*it2).Slope *  i + (*it2).Constant;
+
+
+
+        	        myfile << value << " ";
+
+          }
+          it2++;
+ 	}
+
+    myfile.close();
+
+}
+
+// write all the appoximated PAA values to a file
+void TimeSeries::WriteAllElementsPAA()
+{
+    // assume approximation is already done
+
+     std::vector<double>::iterator it2=Averages.begin() ;
+
+    double   value = 0;
+
+
+    ofstream myfile ("PAAout.txt");
+
+ 	for (std::vector<unsigned int>::iterator it1=ElementCountInSegment.begin();  it1 != ElementCountInSegment.end(); it1++)
+ 	{
+          for (int i = 1; i <= *it1; i++)
+          {
+        	      value =  *it2;
+        	      myfile << value << " ";
+          }
+          it2++;
+ 	}
+
+    myfile.close();
+
+}
+
 };
 

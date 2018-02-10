@@ -61,14 +61,15 @@ class TimeSeries
 	   void DebugPrintAllPAA();
 	   void DebugPrintAllPLR();
 
+	   void WriteAllElementsPLR(); //writes the appox values to a file
+	   void WriteAllElementsPAA();
+
        void CleanUp();
 
-	   void  PLR(double MaxError);
 	   void  PLRbyLR(double MaxError);
 
 	   void  PLRFixedLength(unsigned int SegmentLength);  // calculates PAA with Fixed Length segments
 
-       void FindLineEquation(double BeginY, double BeginX, double EndY, double EndX  ,double& Slope, double& Constant);
 	   void FindLineEquationByLR(double NewX, double NewY,double& SumX, double& SumY, double& SumXY, double& SumXSqr,
 	   double& SumYSqr, double& SampleSize, double& Slope, double& Constant);
 	   void CalculatePLRError(double ActualValue, double Slope, double Count, double Constant, double& Error);

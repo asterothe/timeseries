@@ -29,18 +29,18 @@ int main(void)
        TimeSeries TS;
 
        // make PAA with fixed length 100. Original series has 500k elements.
-       //TS.PAAFixedLength(100);
+       TS.PAAFixedLength(5);
 
        // there will be 500000/100 = 5000 segments
        //TS.DebugPrintAllPAA();
 
-
+       TS.WriteAllElementsPAA();
 
        //TS.GetDesiredApproxElementPAA(3000);
 
        //double average_error = TS.GetAverageErrors(); //2.29775 in this example
 
-       //TS.CleanUp();
+       TS.CleanUp();
 
        // make PAA approx using average Errors of previous FL segmentation
        //TS.PAA(average_error);  // produces 375940 segments
@@ -50,17 +50,17 @@ int main(void)
        //TS.GetDesiredApproxElementPAA(3000);
 
        //TS.PLRbyLR(2);
-       TS.PLRFixedLength(1000);  // 500 segments with 1000 data points
-       TS.DebugPrintAllPLR();
-       TS.GetDesiredApproxElementPLR(2);
+      // TS.PLRFixedLength(1000);  // 500 segments with 1000 data points
+       //TS.DebugPrintAllPLR();
+      // TS.GetDesiredApproxElementPLR(2);
 
-       TS.GetDesiredApproxElementPLR(8);
-       double average_error = TS.GetAverageErrors(); //908.49 in this example
-       TS.CleanUp();
-       TS.PLRbyLR(average_error);
+      // TS.GetDesiredApproxElementPLR(8);
+      // double average_error = TS.GetAverageErrors(); //908.49 in this example
+       //TS.CleanUp();
+       TS.PLRbyLR(25);
+       TS.WriteAllElementsPLR();
+       //TS.DebugPrintAllPLR();  //19683 segments generated
 
-       TS.DebugPrintAllPLR();  //19683 segments generated
 
-       TS.GetDesiredApproxElementPLR(10000);
 	   return EXIT_SUCCESS;
 }
