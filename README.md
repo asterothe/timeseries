@@ -40,6 +40,9 @@ DebugPrintAllPAA(): Dumps out all created segments showing the original time ser
 
 DebugPrintAllPLR(): Dumps out all created segments showing the original time series elements for the segment and saved error and appriximation parameters. Can only be called after a PLR approximation is done. 
 
+WriteAllElementsPAA(): Writes the appoximated values to a file. 
+
+WriteAllElementsPLR(): Writes the appoximated values to a file.
 
 Cleanup: Needs to be called between approximations to do house cleaning.
 GetAverageErrors(): provides the avergae L2 error after an approximation is done. 
