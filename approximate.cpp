@@ -29,10 +29,10 @@ int main(void)
        TimeSeries TS;
 
        // make PAA with fixed length 100. Original series has 500k elements.
-       TS.PAAFixedLength(5);
-
+       //TS.PAAFixedLength(5);
+       TS.PAA(3);
        // there will be 500000/100 = 5000 segments
-       //TS.DebugPrintAllPAA();
+       TS.DebugPrintAllPAA();
 
        TS.WriteAllElementsPAA();
 
@@ -59,7 +59,7 @@ int main(void)
        //TS.CleanUp();
        TS.PLRbyLR(25);
        TS.WriteAllElementsPLR();
-       //TS.DebugPrintAllPLR();  //19683 segments generated
+       TS.DebugPrintAllPLR();  //19683 segments generated
 
 
 	   return EXIT_SUCCESS;

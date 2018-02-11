@@ -47,7 +47,7 @@ class TimeSeries
        std::vector<LineParameters> Lines;
 
        // error measures - 1 for each segment
-       std::vector<double> Errors; // holds L2-norm of errors, each entry is the sum of abs errors for a segment
+       std::vector<double> Errors; // holds L2-norm of errors, each entry is the sqroot of the sum of abs errors for a segment
        std::vector<double> AbsoluteErrors; // hold the abs diff between sum of original and estimated values
 
        std::vector<unsigned int> ElementCountInSegment; // keeps track of the elements in a segment sequentially
