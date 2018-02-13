@@ -28,8 +28,21 @@ TimeSeries::TimeSeries()
 
    float f1, f2, f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14;
    char str1[100], str2[100], str3[100];
+   unsigned int pushcounter = 0;
     FILE *fp;
+    fp = fopen("508-temperature.csv", "r");
+    while (fscanf(fp, "%g\n",
+           &f3) == 1)
+    {
+       //printf("%g %g %g %g \n", f1, f2, f3, f4);
+        OriginalSeries.push_back(f3);
+        pushcounter++;
 
+        // to limit the size of the data we want to process
+       // if (pushcounter == 1000000)
+       // break;
+    }
+/*
     fp = fopen("file2.csv", "r");
     while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
 		  str1, str2, str3, &f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8,&f9, &f10,&f11, &f12,&f13) == 16)
@@ -38,6 +51,7 @@ TimeSeries::TimeSeries()
         OriginalSeries.push_back(f3);
     }
     fclose(fp);
+    */
     /*
     fp = fopen("file1.csv", "r");
     while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
@@ -109,15 +123,25 @@ void  TimeSeries::PAAFixedLength(unsigned int SegmentLength)
      for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
      {
   	         sum += *it;
-  	         average = sum/count;
-	         std::vector<double>::iterator it2 = it;
-  	         int index = (int) count;
-  	         error = 0;
-  	         while(index)
+
+
+  	         // do the calculations once when the segment len is reached or if we are processing the last element
+  	         if (count   ==  SegmentLength || (it + 1) == OriginalSeries.end())
   	         {
-  	        	     error += pow(abs(average- *it2),2);
-  	        	     index--;
-  	        	     it2--;
+  	            average = sum/count;
+	            std::vector<double>::iterator it2 = it;
+  	            int index = (int) count;
+  	            error = 0;
+  	            while(index)
+  	            {
+  	        	        error += pow(abs(average- *it2),2);
+  	        	        index--;
+  	        	        it2--;
+  	            }
+                // keep these for consistency otherwise FL does not need
+  	            previouserror = error;
+  	            lastgoodaverage = average;
+  	            sumofestimations  = (count ) * lastgoodaverage;
   	         }
 
   	         if (count   <= SegmentLength)
@@ -125,10 +149,10 @@ void  TimeSeries::PAAFixedLength(unsigned int SegmentLength)
 
   	              // add to the segment
   	        	     TempSegHolder->push_back(*it);
-  	        	     lastgoodaverage = average;
-  	        	     previouserror = error;
+  	        	     //lastgoodaverage = average;
+  	        	     //previouserror = error;
   	    	         sumoforiginalTS += *it;
-  	    	         sumofestimations  = (count ) * lastgoodaverage;
+  	    	         //sumofestimations  = (count ) * lastgoodaverage;
   	         }
   	         else // NEW SEGMENT
   	         {
@@ -221,6 +245,82 @@ void  TimeSeries::PAA(double MaxError)
     	        	     sum = 0;
     	             sum = *it;
     	             count = 1;
+    	             lastgoodaverage=average = sum/count++;
+
+    	             previouserror= error = pow(abs(average - *it),2);
+
+    	      	     MySegs.push_back(*TempSegHolder);
+    	      	     TempSegHolder->clear();
+   	              // add  as the first element of the next segment
+   	        	     TempSegHolder->push_back(*it);
+
+   	        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
+   	        	     // restrart absolute error calculation
+   	    	         sumoforiginalTS = *it;
+   	    	         sumofestimations = (count - 1) * lastgoodaverage;
+    	         }
+       }
+
+
+       if (!TempSegHolder->empty())
+       {
+    	         MySegs.push_back(*TempSegHolder);
+    	         TempSegHolder->clear();
+        	     Errors.push_back(sqrt(previouserror));
+        	     Averages.push_back(lastgoodaverage);
+        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
+        	     ElementCountInSegment.push_back(count - 1);
+       }
+}
+
+
+// calculate PAA using SW, keeping the error for the segment under MaxError
+void  TimeSeries::PAAIncremental(double MaxError)
+{
+       int i;
+
+       // holds the actual values for the segment. it has as many elements as the segment approximate
+       std::vector<double> *TempSegHolder = new std::vector<double>();
+
+       double average = 0;
+       double count = 1;
+       double error = 0;
+       double sum = 0;
+       double previouserror = 0;
+       double lastgoodaverage = 0;
+       double sumoforiginalTS = 0;
+       double sumofestimations = 0;
+       MaxError = pow(MaxError,2); // compare against the squared value to make calculations easier
+       for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
+       {
+
+    	         sum += *it;
+    	         average = sum/count++;
+
+    	         error +=  pow(abs(average- *it),2);
+
+
+
+    	         if (error < MaxError)
+    	         {
+    	              // add to the segment
+    	        	     TempSegHolder->push_back(*it);
+    	        	     lastgoodaverage = average;
+    	        	     previouserror = error;
+    	    	         sumoforiginalTS += *it;
+    	    	         sumofestimations  = (count -1) * lastgoodaverage;
+    	         }
+    	         else // Create NEW SEGMENT, save old segment and params
+    	         {
+    	        	     Errors.push_back(sqrt(previouserror));
+    	        	     Averages.push_back(lastgoodaverage);
+    	        	     ElementCountInSegment.push_back(count - 2);
+
+    	        	      // reset average count error new segment
+    	        	     sum = 0;
+    	             sum = *it;
+    	             count = 1;
+    	             error = 0;
     	             lastgoodaverage=average = sum/count++;
 
     	             previouserror= error = pow(abs(average - *it),2);

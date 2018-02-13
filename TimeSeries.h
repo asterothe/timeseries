@@ -56,6 +56,7 @@ class TimeSeries
        double GetDesiredApproxElementPLR(unsigned int positionindex); // same for PLR
 
 	   void  PAA(double MaxError);  // calculates PAA approximation using the max error as threshold
+	   void  PAAIncremental(double MaxError);  // same as above but using incremental update method
 	   void  PAAFixedLength(unsigned int SegmentLength); // calculates PAA with Fixed Length segments
 	   double GetAverageErrors(); // Get the average of absolute Errors vector
 	   void DebugPrintAllPAA();
