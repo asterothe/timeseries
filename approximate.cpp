@@ -43,36 +43,67 @@ int main(void)
        time_t timer;
        char buffer[26];
        struct tm* tm_info;
-
        time(&timer);
        tm_info = localtime(&timer);
-
        strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_info);
        puts(buffer);
 */
        // make PAA with fixed length 100. Original series has 500k elements.
-       //TS.PAAFixedLength(86400);
-       TS.PAAIncremental(41.11);
+       TS.PAAFixedLength(10);
 
        gettimeofday(&tval_after, NULL);
 
        timersub(&tval_after, &tval_before, &tval_result);
 
        printf("Time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+
+
+       double average_error = TS.GetAverageErrors();
+       TS.DebugPrintAllPAA();
+       TS.CleanUp();
+
+
+       gettimeofday(&tval_after, NULL);
+
+
+       TS.PAAIncremental(average_error);
+       gettimeofday(&tval_after, NULL);
+
+       timersub(&tval_after, &tval_before, &tval_result);
+
+       printf("Time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+
+
+
+       TS.GetAverageErrors();
+       //TS.DebugPrintAllPAA();
+       TS.CleanUp();
+
+
+       gettimeofday(&tval_after, NULL);
+       TS.PAA(average_error);
+
+
+       gettimeofday(&tval_after, NULL);
+
+       timersub(&tval_after, &tval_before, &tval_result);
+
+       printf("Time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+       TS.GetAverageErrors();
+       //TS.DebugPrintAllPAA();
+
 /*
        time(&timer);
        tm_info = localtime(&timer);
-
        strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_info);
        puts(buffer);
-
 */
        //TS.PAA(3);
        // there will be 500000/100 = 5000 segments
        //TS.DebugPrintAllPAA();
 
-       TS.WriteAllElementsPAA();
-       double average_error = TS.GetAverageErrors();
+       //TS.WriteAllElementsPAA();
+       //double average_error = TS.GetAverageErrors();
        //TS.CleanUp();
        //TS.PAAIncremental(2);
        //TS.GetDesiredApproxElementPAA(3000);
