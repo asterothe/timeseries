@@ -1,3 +1,4 @@
+
 /*
  * TimeSeries.cpp
  *
@@ -30,7 +31,8 @@ TimeSeries::TimeSeries()
    char str1[100], str2[100], str3[100];
    unsigned int pushcounter = 0;
     FILE *fp;
-    fp = fopen("508-temperature.csv", "r");
+    //fp = fopen("508-temperature.csv", "r");
+    fp = fopen("AUDJPY.csv", "r");
     while (fscanf(fp, "%g\n",
            &f3) == 1)
     {
@@ -38,9 +40,11 @@ TimeSeries::TimeSeries()
         OriginalSeries.push_back(f3);
         pushcounter++;
 
-        // to limit the size of the data we want to process
-       // if (pushcounter == 1000000)
-       // break;
+        //cout << f3 <<endl;
+
+         //to limit the size of the data we want to process
+        if (pushcounter == 100000)
+        break;
     }
 /*
     fp = fopen("file2.csv", "r");
@@ -68,7 +72,6 @@ TimeSeries::TimeSeries()
        //printf("%g %g %g %g \n", f1, f2, f3, f4);
         OriginalSeries.push_back(f3);
     }
-
     fclose(fp);
     fp = fopen("file4.csv", "r");
     while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
@@ -77,7 +80,6 @@ TimeSeries::TimeSeries()
        //printf("%g %g %g %g \n", f1, f2, f3, f4);
         OriginalSeries.push_back(f3);
     }
-
     fclose(fp);
     fp = fopen("file5.csv", "r");
     while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
@@ -86,7 +88,6 @@ TimeSeries::TimeSeries()
        //printf("%g %g %g %g \n", f1, f2, f3, f4);
         OriginalSeries.push_back(f3);
     }
-
     fclose(fp);
     fp = fopen("file6.csv", "r");
     while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
@@ -95,7 +96,6 @@ TimeSeries::TimeSeries()
        //printf("%g %g %g %g \n", f1, f2, f3, f4);
         OriginalSeries.push_back(f3);
     }
-
     fclose(fp);
     */
 
@@ -732,13 +732,14 @@ void TimeSeries::DebugPrintAllPAA()
      std::vector<double>::iterator it5=Errors.begin() ;
      std::vector<double>::iterator it7=AbsoluteErrors.begin() ;
      std::vector<unsigned int>::iterator it8=ElementCountInSegment.begin();
+     unsigned int counter = 1;
 
      for (Segs::iterator it1 = MySegs.begin(); it1 != MySegs.end(); it1++)
      {
-       cout << "============SEGMENT START=====" << endl;
+       cout << "============SEGMENT START===== " << counter++ << endl;
   	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
   	   {
-              cout << " original value  = " << *it2 << endl;
+           //   cout << " original value  = " << *it2 << endl;
   	   }
        cout << "seg approximated value = " << *it4 << endl;
        it4++;
@@ -758,7 +759,14 @@ double TimeSeries::GetAverageErrors()
 {
     double sum = 0;
 	std::vector<double>::iterator it5=Errors.begin();
-	    	sum +=*it5;
+	std::vector<double>::iterator limit;
+	if (Errors.size() == 1)
+		limit = Errors.end();
+	else
+		limit = Errors.end() - 1;
+
+    for (; it5 != limit ; it5++)
+	sum +=*it5;
 
 	cout << " Average Error = " << sum/Errors.size() << endl;
 
@@ -793,7 +801,7 @@ void TimeSeries::DebugPrintAllPLR()
        cout << "============SEGMENT START=====" << endl;
   	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
   	   {
-              cout << " original value  = " << *it2 << endl;
+              //cout << " original value  = " << *it2 << endl;
   	   }
 
        cout << "seg L2 error = " << *it5 << endl;
@@ -910,4 +918,3 @@ void TimeSeries::WriteAllElementsPAA()
 }
 
 };
-
