@@ -43,9 +43,12 @@ TimeSeries::TimeSeries()
         //cout << f3 <<endl;
 
          //to limit the size of the data we want to process
-        if (pushcounter == 100000)
+        if (pushcounter == 1000000)
         break;
     }
+
+    cout << "Series size = "<< OriginalSeries.size()  << endl;
+
 /*
     fp = fopen("file2.csv", "r");
     while (fscanf(fp, "\"%8s\",\"%10s %12s\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\",\"%g\"\n",
@@ -207,13 +210,17 @@ void  TimeSeries::PAA(double MaxError)
        double lastgoodaverage = 0;
        double sumoforiginalTS = 0;
        double sumofestimations = 0;
+       unsigned int index = 1;
+       unsigned int segindex = 1;
        MaxError = pow(MaxError,2); // compare against the squared value to make calculations easier
        for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
        {
 
     	         sum += *it;
     	         average = sum/count++;
-
+    	         if (index % 1000 == 0)
+                cout << "working on " << index << endl;
+    	         index++;
     	         // calculate error up to this element
     	         std::vector<double>::iterator it2 = it;
     	         int index = (int) count;
@@ -253,7 +260,8 @@ void  TimeSeries::PAA(double MaxError)
     	      	     TempSegHolder->clear();
    	              // add  as the first element of the next segment
    	        	     TempSegHolder->push_back(*it);
-
+   	        	     //if (segindex % 10== 0)
+                   cout << "new segment "  << segindex++ << endl;
    	        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
    	        	     // restrart absolute error calculation
    	    	         sumoforiginalTS = *it;
@@ -739,7 +747,7 @@ void TimeSeries::DebugPrintAllPAA()
        cout << "============SEGMENT START===== " << counter++ << endl;
   	   for (std::vector<double>::iterator it2=it1->begin() ; it2 != it1->end(); it2++)
   	   {
-           //   cout << " original value  = " << *it2 << endl;
+              cout << " original value  = " << *it2 << endl;
   	   }
        cout << "seg approximated value = " << *it4 << endl;
        it4++;

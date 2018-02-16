@@ -49,7 +49,7 @@ int main(void)
        puts(buffer);
 */
        // make PAA with fixed length 100. Original series has 500k elements.
-       TS.PAAFixedLength(10);
+       TS.PAAFixedLength(10800);
 
        gettimeofday(&tval_after, NULL);
 
@@ -59,7 +59,7 @@ int main(void)
 
 
        double average_error = TS.GetAverageErrors();
-       TS.DebugPrintAllPAA();
+      // TS.DebugPrintAllPAA();
        TS.CleanUp();
 
 
@@ -76,7 +76,7 @@ int main(void)
 
 
        TS.GetAverageErrors();
-       //TS.DebugPrintAllPAA();
+     //  TS.DebugPrintAllPAA();
        TS.CleanUp();
 
 
