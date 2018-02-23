@@ -137,7 +137,7 @@ void  TimeSeries::PAAFixedLength(unsigned int SegmentLength)
   	            error = 0;
   	            while(index)
   	            {
-  	        	        error += pow(abs(average- *it2),2);
+  	        	        error += pow(fabs(average- *it2),2);
   	        	        index--;
   	        	        it2--;
   	            }
@@ -167,13 +167,13 @@ void  TimeSeries::PAAFixedLength(unsigned int SegmentLength)
   	             sum = *it;
   	             count = 1;
   	             lastgoodaverage=average = sum/count;
-  	             previouserror= error = abs(average - *it);
+  	             previouserror= error = fabs(average - *it);
   	      	     MySegs.push_back(*TempSegHolder);
   	      	     TempSegHolder->clear();
  	              // add  as the first element of the next segment
  	        	     TempSegHolder->push_back(*it);
 
- 	        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
+ 	        	     AbsoluteErrors.push_back(fabs(sumofestimations-sumoforiginalTS));
  	        	     // restart absolute error calculation
  	    	         sumoforiginalTS = *it;
  	    	         sumofestimations = count  * lastgoodaverage;
@@ -188,7 +188,7 @@ void  TimeSeries::PAAFixedLength(unsigned int SegmentLength)
   	         TempSegHolder->clear();
       	     Errors.push_back(sqrt(previouserror));
       	     Averages.push_back(lastgoodaverage);
-      	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
+      	     AbsoluteErrors.push_back(fabs(sumofestimations-sumoforiginalTS));
       	     ElementCountInSegment.push_back(count -1);
      }
 }
@@ -219,7 +219,7 @@ void  TimeSeries::PAA(double MaxError)
     	         sum += *it;
     	         average = sum/count++;
     	         if (index2 % 1000 == 0)
-                cout << "working on " << index << endl;
+                cout << "working on " << index2 << endl;
     	         index2++;
     	         // calculate error up to this element
     	         std::vector<double>::iterator it2 = it;
@@ -228,7 +228,7 @@ void  TimeSeries::PAA(double MaxError)
     	         error = 0;
     	         while(index)
     	         {
-    	        	     error += pow(abs(average- *it2),2);
+    	        	     error += pow(fabs(average- *it2),2);
     	        	     index--;
     	        	     it2--;
     	         }
@@ -254,7 +254,7 @@ void  TimeSeries::PAA(double MaxError)
     	             count = 1;
     	             lastgoodaverage=average = sum/count++;
 
-    	             previouserror= error = pow(abs(average - *it),2);
+    	             previouserror= error = pow(fabs(average - *it),2);
 
     	      	     MySegs.push_back(*TempSegHolder);
     	      	     TempSegHolder->clear();
@@ -262,7 +262,7 @@ void  TimeSeries::PAA(double MaxError)
    	        	     TempSegHolder->push_back(*it);
    	        	     //if (segindex % 10== 0)
                    cout << "new segment "  << segindex++ << endl;
-   	        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
+   	        	     AbsoluteErrors.push_back(fabs(sumofestimations-sumoforiginalTS));
    	        	     // restrart absolute error calculation
    	    	         sumoforiginalTS = *it;
    	    	         sumofestimations = (count - 1) * lastgoodaverage;
@@ -276,7 +276,7 @@ void  TimeSeries::PAA(double MaxError)
     	         TempSegHolder->clear();
         	     Errors.push_back(sqrt(previouserror));
         	     Averages.push_back(lastgoodaverage);
-        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
+        	     AbsoluteErrors.push_back(fabs(sumofestimations-sumoforiginalTS));
         	     ElementCountInSegment.push_back(count - 1);
        }
 }
@@ -305,7 +305,7 @@ void  TimeSeries::PAAIncremental(double MaxError)
     	         sum += *it;
     	         average = sum/count++;
 
-    	         error +=  pow(abs(average- *it),2);
+    	         error +=  pow(fabs(average- *it),2);
 
 
 
@@ -331,14 +331,14 @@ void  TimeSeries::PAAIncremental(double MaxError)
     	             error = 0;
     	             lastgoodaverage=average = sum/count++;
 
-    	             previouserror= error = pow(abs(average - *it),2);
+    	             previouserror= error = pow(fabs(average - *it),2);
 
     	      	     MySegs.push_back(*TempSegHolder);
     	      	     TempSegHolder->clear();
    	              // add  as the first element of the next segment
    	        	     TempSegHolder->push_back(*it);
 
-   	        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
+   	        	     AbsoluteErrors.push_back(fabs(sumofestimations-sumoforiginalTS));
    	        	     // restrart absolute error calculation
    	    	         sumoforiginalTS = *it;
    	    	         sumofestimations = (count - 1) * lastgoodaverage;
@@ -352,7 +352,7 @@ void  TimeSeries::PAAIncremental(double MaxError)
     	         TempSegHolder->clear();
         	     Errors.push_back(sqrt(previouserror));
         	     Averages.push_back(lastgoodaverage);
-        	     AbsoluteErrors.push_back(abs(sumofestimations-sumoforiginalTS));
+        	     AbsoluteErrors.push_back(fabs(sumofestimations-sumoforiginalTS));
         	     ElementCountInSegment.push_back(count - 1);
        }
 }
@@ -391,7 +391,7 @@ double TimeSeries::GetDesiredApproxElementPAA(unsigned int positionindex)
 void TimeSeries::CalculatePLRError(double ActualValue, double Slope, double Count, double Constant, double& Error)
 {
      // Error = actual value - (mx + b)
-     Error += pow(abs(ActualValue - (Slope * Count + Constant)),2);
+     Error += pow(fabs(ActualValue - (Slope * Count + Constant)),2);
 }
 
 void  TimeSeries::PLRbyLR(double MaxError)
@@ -490,7 +490,7 @@ void  TimeSeries::PLRbyLR(double MaxError)
         if (error > MaxError)
         {
         	 Errors.push_back(sqrt(previouserror));
-        	 AbsoluteErrors.push_back(abs(PreviousSumPLRApprox - PreviousSumY));
+        	 AbsoluteErrors.push_back(fabs(PreviousSumPLRApprox - PreviousSumY));
  	         MySegs.push_back(*TempSegHolder);
  	         TempSegHolder->clear();
  	         Lines.push_back(LastParams);
@@ -551,7 +551,7 @@ void  TimeSeries::PLRbyLR(double MaxError)
   	         TempSegHolder->clear();
       	     Errors.push_back(sqrt(previouserror));
       	     Lines.push_back(LastParams);
-      	     AbsoluteErrors.push_back(abs(SumPLRApprox - SumY));
+      	     AbsoluteErrors.push_back(fabs(SumPLRApprox - SumY));
       	     ElementCountInSegment.push_back(count - 1); //XXX
 
     	    // cout << "****************** SUM Y [LAST CALL] = " << SumY << endl;
@@ -624,7 +624,7 @@ void  TimeSeries::PLRbyLRIncremental(double MaxError)
      //        cout << " SUMY =" << SumY << "count = " << count << endl;
        // }
 
-	     error +=  pow(abs(*it - (Slope * count + Constant)),2);
+	     error +=  pow(fabs(*it - (Slope * count + Constant)),2);
 	     SumPLRApprox +=  Slope * count + Constant;
 	    // cout << " SumPLRApprox =" << SumPLRApprox << "count = " << count << endl;
 
@@ -662,7 +662,8 @@ void  TimeSeries::PLRbyLRIncremental(double MaxError)
         if (error > MaxError)
         {
         	 Errors.push_back(sqrt(previouserror));
-        	 AbsoluteErrors.push_back(abs(PreviousSumPLRApprox - PreviousSumY));
+        	 AbsoluteErrors.push_back(fabs(PreviousSumPLRApprox - PreviousSumY));
+        	  //cout << " PreviousSumPLRApprox =" << PreviousSumPLRApprox <<  "PreviousSumY = " << PreviousSumY << " abs(PreviousSumPLRApprox - PreviousSumY) = "<< fabs(PreviousSumPLRApprox - PreviousSumY) << endl;
  	         MySegs.push_back(*TempSegHolder);
  	         TempSegHolder->clear();
  	         Lines.push_back(LastParams);
@@ -704,9 +705,9 @@ void  TimeSeries::PLRbyLRIncremental(double MaxError)
                	       LastParams.Slope = Slope;
 
 
-              	     error +=  pow(abs(*it - (Slope * count + Constant)),2);
+              	     error +=  pow(fabs(*it - (Slope * count + Constant)),2);
               	     SumPLRApprox +=  Slope * count + Constant;
-              	    // cout << " SumPLRApprox =" << SumPLRApprox << "count = " << count << endl;
+              	     //cout << " SumPLRApprox =" << SumPLRApprox << "count = " << count << endl;
 
 
              count++;
@@ -729,7 +730,8 @@ void  TimeSeries::PLRbyLRIncremental(double MaxError)
   	         TempSegHolder->clear();
       	     Errors.push_back(sqrt(previouserror));
       	     Lines.push_back(LastParams);
-      	     AbsoluteErrors.push_back(abs(SumPLRApprox - SumY));
+      	     AbsoluteErrors.push_back(fabs(SumPLRApprox - SumY));
+      		 // cout << " PreviousSumPLRApprox =" << SumPLRApprox <<  "SumY = " << SumY << " abs(SumPLRApprox - SumY) = "<< fabs(SumPLRApprox - SumY) <<endl;
       	     ElementCountInSegment.push_back(count - 1); //XXX
 
     	    // cout << "****************** SUM Y [LAST CALL] = " << SumY << endl;
@@ -854,7 +856,7 @@ void  TimeSeries::PLRFixedLength(unsigned int SegmentLength)
 
         {
         	 Errors.push_back(sqrt(previouserror));
-        	 AbsoluteErrors.push_back(abs(PreviousSumPLRApprox - PreviousSumY));
+        	 AbsoluteErrors.push_back(fabs(PreviousSumPLRApprox - PreviousSumY));
  	         MySegs.push_back(*TempSegHolder);
  	         TempSegHolder->clear();
  	         Lines.push_back(LastParams);
@@ -910,7 +912,7 @@ void  TimeSeries::PLRFixedLength(unsigned int SegmentLength)
   	         TempSegHolder->clear();
       	     Errors.push_back(sqrt(previouserror));
       	     Lines.push_back(LastParams);
-      	     AbsoluteErrors.push_back(abs(SumPLRApprox - SumY));
+      	     AbsoluteErrors.push_back(fabs(SumPLRApprox - SumY));
       	     ElementCountInSegment.push_back(count - 1);
 
     	     //cout << "****************** SUM Y [LAST CALL] = " << SumY << endl;
@@ -1013,7 +1015,7 @@ void  TimeSeries::PLRFixedLength2(unsigned int SegmentLength)
 
         {
         	 Errors.push_back(sqrt(previouserror));
-        	 AbsoluteErrors.push_back(abs(PreviousSumPLRApprox - PreviousSumY));
+        	 AbsoluteErrors.push_back(fabs(PreviousSumPLRApprox - PreviousSumY));
  	         MySegs.push_back(*TempSegHolder);
  	         TempSegHolder->clear();
  	         Lines.push_back(LastParams);
@@ -1069,7 +1071,7 @@ void  TimeSeries::PLRFixedLength2(unsigned int SegmentLength)
   	         TempSegHolder->clear();
       	     Errors.push_back(sqrt(previouserror));
       	     Lines.push_back(LastParams);
-      	     AbsoluteErrors.push_back(abs(SumPLRApprox - SumY));
+      	     AbsoluteErrors.push_back(fabs(SumPLRApprox - SumY));
       	     ElementCountInSegment.push_back(count - 1);
 
     	     //cout << "****************** SUM Y [LAST CALL] = " << SumY << endl;

@@ -49,7 +49,7 @@ int main(void)
        puts(buffer);
 */
        // make PAA with fixed length 100. Original series has 500k elements.
-       TS.PLRFixedLength2(10000);
+       TS.PLRFixedLength2(10800);
 
        gettimeofday(&tval_after, NULL);
 
@@ -59,7 +59,7 @@ int main(void)
 
 
        double average_error = TS.GetAverageErrors();
-       TS.DebugPrintAllPLR();
+//       TS.DebugPrintAllPLR();
        TS.CleanUp();
 
 
@@ -76,9 +76,9 @@ int main(void)
 
 
        TS.GetAverageErrors();
-       TS.DebugPrintAllPLR();
+       //TS.DebugPrintAllPLR();
        TS.CleanUp();
-/*
+
 
        gettimeofday(&tval_after, NULL);
        TS.PLRbyLR(average_error);
@@ -90,8 +90,8 @@ int main(void)
 
        printf("Time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
        TS.GetAverageErrors();
-       TS.DebugPrintAllPLR();
-*/
+       //TS.DebugPrintAllPLR();
+
 
 /*
        time(&timer);
