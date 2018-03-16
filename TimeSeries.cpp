@@ -32,22 +32,27 @@ TimeSeries::TimeSeries()
    unsigned int pushcounter = 0;
     FILE *fp;
     //fp = fopen("508-temperature.csv", "r");
-    fp = fopen("AUDJPY.csv", "r");
-    while (fscanf(fp, "%g\n",
-           &f3) == 1)
+    fp = fopen("bkvyz.csv", "r");
+   // while (fscanf(fp, "%g\n",
+   //        &f3) == 1)
+
+
+    	while (fscanf(fp, "%5s;%g;%g;%g;%g;%g;%g;%g;%g\n",
+    		  str1,&f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8) == 9)
     {
        //printf("%g %g %g %g \n", f1, f2, f3, f4);
-        OriginalSeries.push_back(f3);
+        OriginalSeries.push_back(f7);
         pushcounter++;
 
         //cout << f3 <<endl;
 
          //to limit the size of the data we want to process
-        if (pushcounter == 100000)
-        break;
+        //if (pushcounter == 100000)
+        //break;
     }
 
     cout << "Series size = "<< OriginalSeries.size()  << endl;
+    fclose(fp);
 
 /*
     fp = fopen("file2.csv", "r");
@@ -1265,6 +1270,29 @@ void TimeSeries::WriteAllElementsPAA()
         	      myfile << value << " ";
           }
           it2++;
+ 	}
+
+    myfile.close();
+
+}
+
+
+// write original TS to a file
+void TimeSeries::WriteOriginalTS()
+{
+
+    double   value = 0;
+
+
+    ofstream myfile ("TSout.txt");
+
+ 	for (std::vector<double>::iterator it2=OriginalSeries.begin();  it2 != OriginalSeries.end(); it2++)
+ 	{
+
+        	      value =  *it2;
+        	      myfile << value << " ";
+
+
  	}
 
     myfile.close();

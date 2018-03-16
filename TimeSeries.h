@@ -64,6 +64,7 @@ class TimeSeries
 
 	   void WriteAllElementsPLR(); //writes the appox values to a file
 	   void WriteAllElementsPAA();
+	   void WriteOriginalTS();
 
        void CleanUp();
 

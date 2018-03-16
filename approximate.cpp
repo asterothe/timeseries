@@ -30,6 +30,7 @@ int main(void)
 
        TimeSeries TS;
 
+       TS.WriteOriginalTS();
 
        struct timeval tval_before, tval_after, tval_result;
 
@@ -49,14 +50,14 @@ int main(void)
        puts(buffer);
 */
        // make PAA with fixed length 100. Original series has 500k elements.
-       TS.PLRFixedLength2(10800);
+       TS.PLRFixedLength2(10000);
 
        gettimeofday(&tval_after, NULL);
 
        timersub(&tval_after, &tval_before, &tval_result);
 
        printf("Time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
-
+       TS.WriteAllElementsPLR();
 
        double average_error = TS.GetAverageErrors();
 //       TS.DebugPrintAllPLR();
