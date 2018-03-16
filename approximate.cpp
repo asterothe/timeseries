@@ -30,7 +30,7 @@ int main(void)
 
        TimeSeries TS;
 
-       TS.WriteOriginalTS();
+       //TS.WriteOriginalTS(); // do it once
 
        struct timeval tval_before, tval_after, tval_result;
 
@@ -51,13 +51,15 @@ int main(void)
 */
        // make PAA with fixed length 100. Original series has 500k elements.
        TS.PLRFixedLength2(10000);
+       //TS.PAAFixedLength(10000);
 
        gettimeofday(&tval_after, NULL);
 
        timersub(&tval_after, &tval_before, &tval_result);
 
        printf("Time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
-       TS.WriteAllElementsPLR();
+       //TS.WriteAllElementsPLR();
+       //TS.WriteAllElementsPAA();
 
        double average_error = TS.GetAverageErrors();
 //       TS.DebugPrintAllPLR();
@@ -68,6 +70,7 @@ int main(void)
 
 
        TS.PLRbyLRIncremental(average_error);
+       //TS.PAAIncremental(average_error);
        gettimeofday(&tval_after, NULL);
 
        timersub(&tval_after, &tval_before, &tval_result);
@@ -75,7 +78,8 @@ int main(void)
        printf("Time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
 
 
-
+      // TS.WriteAllElementsPAA();
+       //TS.WriteAllElementsPLR();
        TS.GetAverageErrors();
        //TS.DebugPrintAllPLR();
        TS.CleanUp();
@@ -83,13 +87,15 @@ int main(void)
 
        gettimeofday(&tval_after, NULL);
        TS.PLRbyLR(average_error);
-
+       //TS.PAA(average_error);
 
        gettimeofday(&tval_after, NULL);
 
        timersub(&tval_after, &tval_before, &tval_result);
 
        printf("Time elapsed: %ld.%06ld\n", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+       //TS.WriteAllElementsPAA();
+       TS.WriteAllElementsPLR();
        TS.GetAverageErrors();
        //TS.DebugPrintAllPLR();
 
