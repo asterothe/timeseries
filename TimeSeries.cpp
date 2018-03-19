@@ -31,17 +31,17 @@ TimeSeries::TimeSeries()
    char str1[100], str2[100], str3[100];
    unsigned int pushcounter = 0;
     FILE *fp;
-    //fp = fopen("508-temperature.csv", "r");
-    fp = fopen("bkvyz.csv", "r");
-   // while (fscanf(fp, "%g\n",
-   //        &f3) == 1)
+    fp = fopen("508-temperature.csv", "r");
+   // fp = fopen("bkvyz.csv", "r");
+    while (fscanf(fp, "%g\n",
+           &f3) == 1)
 
-   // for bkvyz
-    	while (fscanf(fp, "%5s;%g;%g;%g;%g;%g;%g;%g;%g\n",
-    		  str1,&f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8) == 9)
+   // for bkvyz - f7
+   // 	while (fscanf(fp, "%5s;%g;%g;%g;%g;%g;%g;%g;%g\n",
+   // 		  str1,&f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8) == 9)
     {
        //printf("%g %g %g %g \n", f1, f2, f3, f4);
-        OriginalSeries.push_back(f7);
+        OriginalSeries.push_back(f3); // f7 for bkvyz
         pushcounter++;
 
         //cout << f3 <<endl;
@@ -472,7 +472,7 @@ void  TimeSeries::PLRbyLR(double MaxError)
         }
         indexit = begit;//????
         error = 0; //????
-        if (index % 1000 == 0)
+        if (index % 100000 == 0)
             cout << "working on " << index << endl;
         index++;
         FindLineEquationByLR( X, *it, SumX, SumY,  SumXY,  SumXSqr,
