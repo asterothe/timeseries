@@ -36,7 +36,7 @@ TimeSeries::TimeSeries()
    // while (fscanf(fp, "%g\n",
    //        &f3) == 1)
 
-
+   // for bkvyz
     	while (fscanf(fp, "%5s;%g;%g;%g;%g;%g;%g;%g;%g\n",
     		  str1,&f1, &f2, &f3, &f4 ,&f5, &f6,&f7, &f8) == 9)
     {
@@ -48,7 +48,7 @@ TimeSeries::TimeSeries()
 
          //to limit the size of the data we want to process
         //if (pushcounter == 100000)
-        //break;
+         // break;
     }
 
     cout << "Series size = "<< OriginalSeries.size()  << endl;
@@ -200,7 +200,7 @@ void  TimeSeries::PAAFixedLength(unsigned int SegmentLength)
 
 
 // calculate PAA using SW, keeping the error for the segment under MaxError
-void  TimeSeries::PAA(double MaxError)
+void  TimeSeries::PAA(double MaxError , bool DynamicMaxError, double ErrorRate)
 {
        int i;
 
@@ -218,12 +218,14 @@ void  TimeSeries::PAA(double MaxError)
        unsigned int index2 = 1;
        unsigned int segindex = 1;
        MaxError = pow(MaxError,2); // compare against the squared value to make calculations easier
+       double MaxErrorHelper = 0;
+
        for (std::vector<double>::iterator it = OriginalSeries.begin(); it != OriginalSeries.end(); it++)
        {
 
     	         sum += *it;
     	         average = sum/count++;
-    	         if (index2 % 1000 == 0)
+    	         if (index2 % 100000 == 0)
                 cout << "working on " << index2 << endl;
     	         index2++;
     	         // calculate error up to this element
@@ -237,7 +239,19 @@ void  TimeSeries::PAA(double MaxError)
     	        	     index--;
     	        	     it2--;
     	         }
+	    	     if (DynamicMaxError)
+	    	     {
 
+	    	      	       MaxErrorHelper = ErrorRate * *it;
+	    	      	       MaxErrorHelper = pow(MaxErrorHelper,2);
+
+	    	      	       MaxError += MaxErrorHelper;
+	    	    	         if (index2 % 100000 == 0)
+	    	    	         {
+	    	                cout << "max dynamic error  " << MaxError << endl;
+	    	                cout << " helper dynamic error  " << MaxErrorHelper << endl;
+	    	    	         }
+	    	     }
     	         if (error < MaxError)
     	         {
     	              // add to the segment
@@ -246,6 +260,7 @@ void  TimeSeries::PAA(double MaxError)
     	        	     previouserror = error;
     	    	         sumoforiginalTS += *it;
     	    	         sumofestimations  = (count -1) * lastgoodaverage;
+
     	         }
     	         else // Create NEW SEGMENT, save old segment and params
     	         {
@@ -271,6 +286,13 @@ void  TimeSeries::PAA(double MaxError)
    	        	     // restrart absolute error calculation
    	    	         sumoforiginalTS = *it;
    	    	         sumofestimations = (count - 1) * lastgoodaverage;
+   	    	         if (DynamicMaxError)
+   	    	         {
+	    	      	       MaxErrorHelper = ErrorRate * *it;
+	    	      	       MaxErrorHelper = pow(MaxErrorHelper,2);
+	    	      	       MaxError = MaxErrorHelper;
+
+   	    	         }
     	         }
        }
 
@@ -1248,6 +1270,8 @@ void TimeSeries::WriteAllElementsPLR()
 
     myfile.close();
 
+    cout <<" # of segments = " << Lines.size() << " " << Errors.size() << endl;
+
 }
 
 // write all the appoximated PAA values to a file
@@ -1273,6 +1297,7 @@ void TimeSeries::WriteAllElementsPAA()
  	}
 
     myfile.close();
+    cout <<" # of segments = " << Averages.size() <<  endl;
 
 }
 
